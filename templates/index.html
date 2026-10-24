@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CryptoShield — Adaptive Hybrid Cryptography for Secure File Transmission using AES-256, RSA-2048, SHA-256, and Digital Signatures.">
+    <title>CryptoShield — Secure File Transmission</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ============================== SVG SPRITE (hidden) ============================== -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 010-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></symbol>
+    <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></symbol>
+    <symbol id="i-pen-tool" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+</svg>
+
+<!-- ============================== HEADER ============================== -->
+<header class="header">
+    <div class="header-inner">
+        <a class="header-brand" href="/">
+            <div class="header-logo">
+                <svg><use href="#i-shield"/></svg>
+            </div>
+            <div class="brand-text">
+                <h1>CryptoShield</h1>
+                <span>Hybrid Cryptography Engine</span>
+            </div>
+        </a>
+        <div class="header-right">
+            <span class="status-dot"></span>
+            System Secure
+        </div>
+    </div>
+</header>
+
+<!-- ============================== MAIN ============================== -->
+<div class="main">
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+        <button class="tab-btn active" data-tab="dashboard">
+            <span class="icon"><svg><use href="#i-activity"/></svg></span>
+            Dashboard
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="keygen">
+            <span class="icon"><svg><use href="#i-key"/></svg></span>
+            Key Generation
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="encrypt">
+            <span class="icon"><svg><use href="#i-lock"/></svg></span>
+            Encrypt &amp; Sign
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="decrypt">
+            <span class="icon"><svg><use href="#i-unlock"/></svg></span>
+            Decrypt &amp; Verify
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="tamper">
+            <span class="icon"><svg><use href="#i-alert"/></svg></span>
+            Tamper Lab
+            <span class="tab-indicator"></span>
+        </button>
+    </nav>
+
+    <!-- ================== PANEL: DASHBOARD ================== -->
+    <section class="panel active" id="p-dashboard">
+
+        <div class="hero">
+            <div class="hero-title">Secure File Transmission with <span>CryptoShield</span></div>
+            <p class="hero-subtitle">
+                End-to-end file security using AES-256 symmetric encryption, RSA-2048 key exchange,
+                SHA-256 integrity verification, and RSA digital signatures.
+            </p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value" id="s-users">0</div>
+                <div class="metric-label">Users</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="s-bundles">0</div>
+                <div class="metric-label">Bundles</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">AES-256</div>
+                <div class="metric-label">Encryption</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">RSA-2048</div>
+                <div class="metric-label">Key Exchange</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">SHA-256</div>
+                <div class="metric-label">Integrity</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">RSA-Sign</div>
+                <div class="metric-label">Authentication</div>
+            </div>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-layers"/></svg></span>
+                Cryptographic Pipeline
+            </div>
+            <div class="pipeline">
+                <div class="pipe-step completed">
+                    <span class="icon"><svg><use href="#i-file"/></svg></span> Original File
+                </div>
+                <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <div class="pipe-step completed">
+                    <span class="icon"><svg><use href="#i-hash"/></svg></span> SHA-256 Hash
+                </div>
+                <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <div class="pipe-step completed">
+                    <span class="icon"><svg><use href="#i-pen-tool"/></svg></span> RSA Sign
+                </div>
+                <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <div class="pipe-step completed">
+                    <span class="icon"><svg><use href="#i-lock"/></svg></span> AES-256 Encrypt
+                </div>
+                <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <div class="pipe-step completed">
+                    <span class="icon"><svg><use href="#i-key"/></svg></span> RSA Key Wrap
+                </div>
+                <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <div class="pipe-step current">
+                    <span class="icon"><svg><use href="#i-box"/></svg></span> Secure Bundle
+                </div>
+            </div>
+        </div>
+
+        <!-- Bundles list -->
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-box"/></svg></span>
+                Encrypted Bundles
+            </div>
+            <div id="dash-bundles">
+                <div class="empty">
+                    <div class="icon-2xl" style="color:var(--text-500);margin:0 auto 12px;width:44px;height:44px">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </div>
+                    <p>No encrypted bundles yet. Use <strong>Encrypt & Sign</strong> to create one.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: KEY GENERATION ================== -->
+    <section class="panel" id="p-keygen">
+        <h2 class="panel-title">RSA Key Pair Generation</h2>
+        <p class="panel-desc">Generate RSA-2048 public/private key pairs for each participant. Both sender and receiver need their own key pair.</p>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon"><svg><use href="#i-user"/></svg></span>
+                    Generate New Key Pair
+                </div>
+                <div class="field">
+                    <label class="field-label" for="kg-name">Username</label>
+                    <input class="input" type="text" id="kg-name" placeholder="e.g. Alice, Bob, Charlie…">
+                </div>
+                <button class="btn btn-brand btn-block" id="btn-keygen" onclick="generateKeys()">
+                    <span class="icon"><svg><use href="#i-key"/></svg></span>
+                    Generate RSA-2048 Keys
+                </button>
+                <div id="kg-result"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon"><svg><use href="#i-users"/></svg></span>
+                    Registered Users
+                </div>
+                <div id="users-list">
+                    <div class="empty">
+                        <div class="icon-2xl" style="color:var(--text-500);margin:0 auto 12px;width:44px;height:44px">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        </div>
+                        <p>No users yet. Generate a key pair to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-info"/></svg></span>
+                How RSA-2048 Key Pairs Work
+            </div>
+            <div class="grid grid-3">
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-unlock"/></svg></span> Public Key</h4>
+                    <p>Shared openly. Used to encrypt data for the owner and to verify their signatures.</p>
+                </div>
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--indigo-400)"><svg><use href="#i-lock"/></svg></span> Private Key</h4>
+                    <p>Kept secret. Used to decrypt received data and create digital signatures. Never shared.</p>
+                </div>
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--green-400)"><svg><use href="#i-shield"/></svg></span> 2048-bit Security</h4>
+                    <p>Provides 112-bit equivalent security strength. Computationally infeasible to crack with current technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: ENCRYPT & SIGN ================== -->
+    <section class="panel" id="p-encrypt">
+        <h2 class="panel-title">Encrypt & Sign File</h2>
+        <p class="panel-desc">Select a file, choose sender and receiver identities, then encrypt with AES-256 and digitally sign.</p>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon"><svg><use href="#i-upload"/></svg></span>
+                    File Selection
+                </div>
+                <div class="drop-zone" id="dz">
+                    <div class="dz-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="dz-text"><strong>Click to browse</strong> or drag & drop</div>
+                    <div class="dz-hint">Any file type · Max 50 MB</div>
+                    <input type="file" id="file-input" onchange="onFile(this)">
+                </div>
+                <div id="file-info" style="display:none" class="file-badge">
+                    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+                    <span id="file-name">—</span>
+                    <span style="color:var(--text-400)" id="file-size"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon"><svg><use href="#i-send"/></svg></span>
+                    Sender & Receiver
+                </div>
+                <div class="field">
+                    <label class="field-label" for="enc-sender">Sender (signer)</label>
+                    <select class="select" id="enc-sender"><option value="">— Select sender —</option></select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="enc-receiver">Receiver</label>
+                    <select class="select" id="enc-receiver"><option value="">— Select receiver —</option></select>
+                </div>
+                <button class="btn btn-brand btn-block" id="btn-encrypt" onclick="encryptFile()">
+                    <span class="icon"><svg><use href="#i-lock"/></svg></span>
+                    Encrypt & Sign
+                </button>
+            </div>
+        </div>
+
+        <div id="enc-result"></div>
+
+        <div class="card" id="enc-log-card" style="display:none">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-terminal"/></svg></span>
+                Operation Log
+            </div>
+            <div class="log-box" id="enc-log"></div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: DECRYPT & VERIFY ================== -->
+    <section class="panel" id="p-decrypt">
+        <h2 class="panel-title">Decrypt & Verify</h2>
+        <p class="panel-desc">Decrypt an encrypted bundle, verify file integrity via SHA-256, and authenticate the sender's digital signature.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-box"/></svg></span>
+                Select Bundle
+            </div>
+            <div class="field">
+                <label class="field-label" for="dec-bundle">Encrypted Bundle</label>
+                <select class="select" id="dec-bundle"><option value="">— Select a bundle —</option></select>
+            </div>
+            <button class="btn btn-success btn-block" id="btn-decrypt" onclick="decryptBundle()">
+                <span class="icon"><svg><use href="#i-unlock"/></svg></span>
+                Decrypt, Verify & Authenticate
+            </button>
+        </div>
+
+        <div id="dec-result"></div>
+
+        <div class="card" id="dec-log-card" style="display:none">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-terminal"/></svg></span>
+                Verification Log
+            </div>
+            <div class="log-box" id="dec-log"></div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: TAMPER LAB ================== -->
+    <section class="panel" id="p-tamper">
+        <h2 class="panel-title">Tamper Simulation Lab</h2>
+        <p class="panel-desc">Simulate real-world attacks on encrypted bundles to test CryptoShield's tamper detection and sender verification.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-box"/></svg></span>
+                Target Bundle
+            </div>
+            <div class="field">
+                <label class="field-label" for="tamp-bundle">Select Bundle to Attack</label>
+                <select class="select" id="tamp-bundle"><option value="">— Select a bundle —</option></select>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-zap"/></svg></span>
+                Choose Attack Vector
+            </div>
+            <div class="grid grid-3">
+                <div class="attack-card" onclick="doTamper('ciphertext')">
+                    <div class="attack-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                    </div>
+                    <h4>Modify Ciphertext</h4>
+                    <p>Flip bytes in the encrypted payload. Simulates a man-in-the-middle interception.</p>
+                </div>
+                <div class="attack-card" onclick="doTamper('signature')">
+                    <div class="attack-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                    </div>
+                    <h4>Corrupt Signature</h4>
+                    <p>Alter the digital signature bytes. Simulates an impersonation or forgery attack.</p>
+                </div>
+                <div class="attack-card" onclick="doTamper('hash')">
+                    <div class="attack-icon">
+                        <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+                    </div>
+                    <h4>Falsify Hash</h4>
+                    <p>Replace the stored SHA-256 hash with zeros. Simulates metadata forgery.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tamp-result"></div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="icon"><svg><use href="#i-info"/></svg></span>
+                How Detection Works
+            </div>
+            <div class="grid grid-2">
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-hash"/></svg></span> Integrity — SHA-256</h4>
+                    <p>After decryption, the file's SHA-256 hash is recomputed and compared to the stored original. Even a single bit change produces a completely different hash value.</p>
+                </div>
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--indigo-400)"><svg><use href="#i-pen-tool"/></svg></span> Authentication — Digital Signature</h4>
+                    <p>The sender signs the file hash with their RSA private key. The receiver verifies using the sender's public key. An invalid signature means the sender cannot be trusted.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /main -->
+
+<!-- ============================== JAVASCRIPT ============================== -->
+<script>
+// ── State
+let users = [], bundles = [], selectedFile = null;
+
+// ── Inline SVG strings for JS-generated HTML
+const IC = {
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 010-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+};
+
+// ── Tab Navigation
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('p-' + btn.dataset.tab).classList.add('active');
+        refreshData();
+    });
+});
+
+// ── Utilities
+const fmt = bytes => {
+    if (!bytes) return '0 B';
+    const k = 1024, s = ['B','KB','MB','GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + s[i];
+};
+const ts = () => new Date().toLocaleTimeString();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const esc = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
+const api = async (url, o = {}) => { try { const r = await fetch(url, o); return await r.json(); } catch(e) { return {error:e.message}; } };
+
+function addLog(id, msg, cls='') {
+    const c = document.getElementById(id);
+    const l = document.createElement('div');
+    l.className = 'log-entry';
+    l.innerHTML = `<span class="log-ts">[${ts()}]</span> <span class="log-m ${cls}">${msg}</span>`;
+    c.appendChild(l);
+    c.scrollTop = c.scrollHeight;
+}
+
+// ── Refresh
+async function refreshData() {
+    const u = await api('/api/users');
+    if (!u.error) { users = u; renderUsers(); renderDropdowns(); document.getElementById('s-users').textContent = users.length; }
+    const b = await api('/api/bundles');
+    if (!b.error) { bundles = b; renderBundles(); renderBundleDropdowns(); document.getElementById('s-bundles').textContent = bundles.length; }
+}
+
+function renderUsers() {
+    const el = document.getElementById('users-list');
+    if (!users.length) { el.innerHTML = '<div class="empty"><p>No users yet.</p></div>'; return; }
+    el.innerHTML = users.map(u =>
+        `<span class="chip"><span class="icon">${IC.key}</span> ${esc(u.username)}</span>`
+    ).join('');
+}
+
+function renderDropdowns() {
+    ['enc-sender','enc-receiver'].forEach(id => {
+        const s = document.getElementById(id);
+        const v = s.value;
+        s.innerHTML = '<option value="">— Select —</option>';
+        users.forEach(u => { s.innerHTML += `<option value="${esc(u.username)}" ${u.username===v?'selected':''}>${esc(u.username)}</option>`; });
+    });
+}
+
+function renderBundles() {
+    const el = document.getElementById('dash-bundles');
+    if (!bundles.length) { el.innerHTML = '<div class="empty"><p>No encrypted bundles yet.</p></div>'; return; }
+    el.innerHTML = bundles.map(b => `
+        <div class="bundle-row" onclick="goDecrypt('${b.bundle_id}')">
+            <div class="bundle-info">
+                <span class="icon" style="color:var(--indigo-400)">${IC.box}</span>
+                <div>
+                    <div class="bundle-name">${esc(b.original_filename)}</div>
+                    <div class="bundle-detail">${esc(b.sender)} → ${esc(b.receiver)} · ${fmt(b.original_size)} → ${fmt(b.encrypted_size)}</div>
+                </div>
+            </div>
+            <span class="bundle-tag">${b.bundle_id}</span>
+        </div>
+    `).join('');
+}
+
+function renderBundleDropdowns() {
+    ['dec-bundle','tamp-bundle'].forEach(id => {
+        const s = document.getElementById(id);
+        const v = s.value;
+        s.innerHTML = '<option value="">— Select a bundle —</option>';
+        bundles.forEach(b => {
+            s.innerHTML += `<option value="${b.bundle_id}" ${b.bundle_id===v?'selected':''}>${b.bundle_id} — ${esc(b.original_filename)} (${esc(b.sender)} → ${esc(b.receiver)})</option>`;
+        });
+    });
+}
+
+function goDecrypt(bid) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('[data-tab="decrypt"]').classList.add('active');
+    document.getElementById('p-decrypt').classList.add('active');
+    refreshData().then(() => { document.getElementById('dec-bundle').value = bid; });
+}
+
+// ── File selection
+function onFile(inp) {
+    if (inp.files.length) {
+        selectedFile = inp.files[0];
+        document.getElementById('file-info').style.display = 'inline-flex';
+        document.getElementById('file-name').textContent = selectedFile.name;
+        document.getElementById('file-size').textContent = fmt(selectedFile.size);
+    }
+}
+
+const dz = document.getElementById('dz');
+['dragover','dragenter'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag-over'); }));
+['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag-over'); }));
+dz.addEventListener('drop', ev => { if (ev.dataTransfer.files.length) { document.getElementById('file-input').files = ev.dataTransfer.files; onFile(document.getElementById('file-input')); } });
+
+// ── Generate Keys
+async function generateKeys() {
+    const name = document.getElementById('kg-name').value.trim();
+    if (!name) return alert('Enter a username');
+    const btn = document.getElementById('btn-keygen');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generating…';
+
+    const d = await api('/api/generate-keys', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:name}) });
+    btn.disabled = false; btn.innerHTML = `<span class="icon">${IC.key}</span> Generate RSA-2048 Keys`;
+
+    const el = document.getElementById('kg-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Error</div><div class="result-body"><p style="color:var(--text-300)">${d.error}</p></div></div>`;
+    } else {
+        el.innerHTML = `
+        <div class="result">
+            <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
+            <div class="result-body">
+                <div class="result-row"><span class="result-key">Key Size</span><span class="result-val accent">${d.key_size}-bit RSA</span></div>
+                <div class="result-row"><span class="result-key">Generated</span><span class="result-val">${d.timestamp}</span></div>
+                <div class="mono-block" style="margin-top:10px">
+                    <span class="mono-label">Public Key (shareable)</span>
+                    ${esc(d.public_key)}
+                </div>
+            </div>
+        </div>`;
+        document.getElementById('kg-name').value = '';
+    }
+    refreshData();
+}
+
+// ── Encrypt
+async function encryptFile() {
+    const sender = document.getElementById('enc-sender').value;
+    const receiver = document.getElementById('enc-receiver').value;
+    if (!selectedFile) return alert('Select a file');
+    if (!sender) return alert('Select a sender');
+    if (!receiver) return alert('Select a receiver');
+    if (sender === receiver) return alert('Sender and receiver must be different');
+
+    const btn = document.getElementById('btn-encrypt');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Encrypting…';
+
+    const lc = document.getElementById('enc-log-card'); lc.style.display = 'block';
+    document.getElementById('enc-log').innerHTML = '';
+
+    addLog('enc-log', `Encrypting "${selectedFile.name}" (${fmt(selectedFile.size)})`, 'info');
+    addLog('enc-log', `Sender: ${sender}  |  Receiver: ${receiver}`, 'info');
+    await sleep(250); addLog('enc-log', 'Computing SHA-256 hash…');
+    await sleep(200); addLog('enc-log', 'Signing hash with sender RSA private key…');
+    await sleep(200); addLog('enc-log', 'Generating 256-bit AES session key…');
+    await sleep(200); addLog('enc-log', 'Encrypting file with AES-256-CBC…');
+    await sleep(200); addLog('enc-log', 'Wrapping AES key with receiver RSA public key (OAEP)…');
+
+    const fd = new FormData();
+    fd.append('file', selectedFile); fd.append('sender', sender); fd.append('receiver', receiver);
+    const d = await api('/api/encrypt', { method:'POST', body:fd });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt & Sign`;
+    const el = document.getElementById('enc-result');
+
+    if (d.error) {
+        addLog('enc-log', `ERROR: ${d.error}`, 'err');
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Encryption Failed</div><div class="result-body"><p style="color:var(--text-300)">${d.error}</p></div></div>`;
+    } else {
+        addLog('enc-log', 'Bundle created successfully', 'ok');
+        addLog('enc-log', `Bundle ID: ${d.bundle_id}`, 'ok');
+        addLog('enc-log', `Suite: ${d.algorithm_suite}`, 'info');
+        el.innerHTML = `
+        <div class="result">
+            <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
+            <div class="result-body">
+                <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
+                <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
+                <div class="result-row"><span class="result-key">Original Size</span><span class="result-val">${fmt(d.original_size)}</span></div>
+                <div class="result-row"><span class="result-key">Encrypted Size</span><span class="result-val">${fmt(d.encrypted_size)}</span></div>
+                <div class="result-row"><span class="result-key">Suite</span><span class="result-val accent">${d.algorithm_suite}</span></div>
+                <div class="result-row"><span class="result-key">AES Key Protected</span><span class="result-val ok">Yes (RSA-OAEP)</span></div>
+                <div class="mono-block"><span class="mono-label">SHA-256 File Hash</span>${d.file_hash_sha256}</div>
+                <div class="mono-block"><span class="mono-label">Digital Signature (preview)</span>${d.signature_preview}</div>
+            </div>
+        </div>`;
+    }
+    refreshData();
+}
+
+// ── Decrypt
+async function decryptBundle() {
+    const bid = document.getElementById('dec-bundle').value;
+    if (!bid) return alert('Select a bundle');
+    const btn = document.getElementById('btn-decrypt');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Decrypting…';
+
+    const lc = document.getElementById('dec-log-card'); lc.style.display = 'block';
+    document.getElementById('dec-log').innerHTML = '';
+
+    addLog('dec-log', `Decrypting bundle "${bid}"`, 'info');
+    await sleep(250); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
+    await sleep(250); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
+    await sleep(250); addLog('dec-log', 'Recomputing SHA-256 hash…');
+    await sleep(250); addLog('dec-log', 'Verifying digital signature…');
+
+    const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify & Authenticate`;
+
+    const el = document.getElementById('dec-result');
+    if (d.error) {
+        addLog('dec-log', `ERROR: ${d.error}`, 'err');
+        if (d.tamper_detected) addLog('dec-log', 'TAMPER DETECTED — file compromised', 'err');
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div><div class="result-body">
+            ${d.integrity ? `<div class="result-row"><span class="result-key">Integrity</span><span class="result-val err">${d.integrity}</span></div>` : ''}
+            ${d.authentication ? `<div class="result-row"><span class="result-key">Authentication</span><span class="result-val err">${d.authentication}</span></div>` : ''}
+        </div></div>`;
+        return;
+    }
+
+    const bad = d.tamper_detected;
+    if (bad) {
+        addLog('dec-log', 'TAMPER DETECTED', 'err');
+        if (!d.hash_match) addLog('dec-log', '  SHA-256 hash mismatch — file modified', 'err');
+        if (!d.signature_valid) addLog('dec-log', '  Signature invalid — sender unverified', 'err');
+    } else {
+        addLog('dec-log', 'Integrity check PASSED (SHA-256)', 'ok');
+        addLog('dec-log', 'Sender authentication VERIFIED', 'ok');
+        addLog('dec-log', 'File is TRUSTED', 'ok');
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ${bad?'err':'ok'}"><span class="icon">${bad?IC.x:IC.check}</span> ${esc(d.overall_status)}</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
+            <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
+            <div class="result-row"><span class="result-key">Decrypted Size</span><span class="result-val">${fmt(d.decrypted_size)}</span></div>
+            <div class="result-row"><span class="result-key">Integrity (SHA-256)</span><span class="result-val ${d.hash_match?'ok':'err'}">${d.integrity}</span></div>
+            <div class="result-row"><span class="result-key">Authentication</span><span class="result-val ${d.signature_valid?'ok':'err'}">${d.authentication}</span></div>
+            <div class="hash-compare">
+                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Original Hash (stored)</div><div class="hash-val">${d.original_hash}</div></div>
+                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Computed Hash (after decryption)</div><div class="hash-val">${d.computed_hash}</div></div>
+            </div>
+            ${d.is_text ? `<div class="mono-block"><span class="mono-label">Decrypted Preview</span>${esc(d.file_preview)}</div>` : `<div style="margin-top:10px;color:var(--text-400);font-size:0.82rem">Binary file — ${fmt(d.decrypted_size)}</div>`}
+        </div>
+    </div>`;
+}
+
+// ── Tamper
+async function doTamper(type) {
+    const bid = document.getElementById('tamp-bundle').value;
+    if (!bid) return alert('Select a target bundle first');
+    const d = await api('/api/tamper', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid, tamper_type:type}) });
+    const el = document.getElementById('tamp-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+    } else {
+        el.innerHTML = `
+        <div class="result">
+            <div class="result-bar warn"><span class="icon">${IC.alert}</span> Bundle Tampered</div>
+            <div class="result-body">
+                <div class="result-row"><span class="result-key">Attack Type</span><span class="result-val warn">${d.tamper_type}</span></div>
+                <div class="result-row"><span class="result-key">Detail</span><span class="result-val">${esc(d.detail)}</span></div>
+                <div class="result-row"><span class="result-key">Bundle</span><span class="result-val accent">${d.bundle_id}</span></div>
+                <div class="callout callout-info">
+                    <span class="icon">${IC.info}</span>
+                    <span>Now go to <strong>Decrypt & Verify</strong> and try decrypting this bundle to see CryptoShield detect the tampering.</span>
+                </div>
+            </div>
+        </div>`;
+    }
+}
+
+// ── Init
+refreshData();
+</script>
+
+</body>
+</html>
