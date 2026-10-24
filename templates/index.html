@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CryptoShield — Adaptive Hybrid Cryptography for Secure File Transmission using AES-256, RSA-2048, SHA-256, and Digital Signatures.">
-    <title>CryptoShield — Secure File Transmission</title>
+    <meta name="description" content="CryptoShield — Advanced Cryptography Lab: Image Encryption, Steganography, Cipher Playground, QR Vault, PKI Simulator and more.">
+    <title>CryptoShield — Advanced Cryptography Lab</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -36,6 +36,13 @@
     <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
     <symbol id="i-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
     <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></symbol>
+    <symbol id="i-qr-code" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3"/><rect x="16" y="5" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="5" y="16" width="3" height="3"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></symbol>
 </svg>
 
 <!-- ============================== HEADER ============================== -->
@@ -47,7 +54,7 @@
             </div>
             <div class="brand-text">
                 <h1>CryptoShield</h1>
-                <span>Hybrid Cryptography Engine</span>
+                <span>Advanced Cryptography Lab</span>
             </div>
         </a>
         <div class="header-right">
@@ -61,7 +68,7 @@
 <div class="main">
 
     <!-- Tab Bar -->
-    <nav class="tab-bar">
+    <nav class="tab-bar" id="main-tabs">
         <button class="tab-btn active" data-tab="dashboard">
             <span class="icon"><svg><use href="#i-activity"/></svg></span>
             Dashboard
@@ -69,22 +76,47 @@
         </button>
         <button class="tab-btn" data-tab="keygen">
             <span class="icon"><svg><use href="#i-key"/></svg></span>
-            Key Generation
+            Key Gen
             <span class="tab-indicator"></span>
         </button>
         <button class="tab-btn" data-tab="encrypt">
             <span class="icon"><svg><use href="#i-lock"/></svg></span>
-            Encrypt &amp; Sign
+            Encrypt
             <span class="tab-indicator"></span>
         </button>
         <button class="tab-btn" data-tab="decrypt">
             <span class="icon"><svg><use href="#i-unlock"/></svg></span>
-            Decrypt &amp; Verify
+            Decrypt
             <span class="tab-indicator"></span>
         </button>
         <button class="tab-btn" data-tab="tamper">
             <span class="icon"><svg><use href="#i-alert"/></svg></span>
             Tamper Lab
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="imgcrypt">
+            <span class="icon"><svg><use href="#i-image"/></svg></span>
+            Image Crypt
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="steg">
+            <span class="icon"><svg><use href="#i-eye"/></svg></span>
+            Steganography
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="playground">
+            <span class="icon"><svg><use href="#i-cpu"/></svg></span>
+            Cipher Lab
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="qrvault">
+            <span class="icon"><svg><use href="#i-qr-code"/></svg></span>
+            QR Vault
+            <span class="tab-indicator"></span>
+        </button>
+        <button class="tab-btn" data-tab="pki">
+            <span class="icon"><svg><use href="#i-award"/></svg></span>
+            PKI Sim
             <span class="tab-indicator"></span>
         </button>
     </nav>
@@ -93,14 +125,58 @@
     <section class="panel active" id="p-dashboard">
 
         <div class="hero">
-            <div class="hero-title">Secure File Transmission with <span>CryptoShield</span></div>
+            <div class="hero-title">Advanced Cryptography with <span>CryptoShield</span></div>
             <p class="hero-subtitle">
-                End-to-end file security using AES-256 symmetric encryption, RSA-2048 key exchange,
-                SHA-256 integrity verification, and RSA digital signatures.
+                A complete cryptographic laboratory — file encryption, image encryption, steganography, multi-cipher comparison, QR-coded secrets, and a full PKI certificate simulator.
             </p>
         </div>
 
-        <div class="metrics">
+        <div class="feature-grid">
+            <div class="feature-card" onclick="switchTab('imgcrypt')">
+                <div class="feature-icon" style="background:rgba(6,182,212,0.1);color:var(--cyan-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <h3>Image Encryption</h3>
+                <p>Encrypt images with AES-256 and see pixel-level scrambling in real time. Decrypt to restore perfectly.</p>
+            </div>
+            <div class="feature-card" onclick="switchTab('steg')">
+                <div class="feature-icon" style="background:rgba(99,102,241,0.1);color:var(--indigo-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <h3>Steganography Lab</h3>
+                <p>Hide secret messages inside images using LSB encoding. The image looks identical — the secret is invisible.</p>
+            </div>
+            <div class="feature-card" onclick="switchTab('playground')">
+                <div class="feature-icon" style="background:rgba(245,158,11,0.1);color:var(--amber-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                </div>
+                <h3>Cipher Playground</h3>
+                <p>Compare AES-256, DES, Caesar, and Vigenère ciphers side-by-side on the same plaintext.</p>
+            </div>
+            <div class="feature-card" onclick="switchTab('qrvault')">
+                <div class="feature-icon" style="background:rgba(52,211,153,0.1);color:var(--green-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3"/><rect x="16" y="5" width="3" height="3"/><rect x="5" y="16" width="3" height="3"/></svg>
+                </div>
+                <h3>QR Code Secret Vault</h3>
+                <p>Encrypt a message and embed it in a QR code. Only the keyholder can decode it.</p>
+            </div>
+            <div class="feature-card" onclick="switchTab('pki')">
+                <div class="feature-icon" style="background:rgba(248,113,113,0.1);color:var(--red-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                </div>
+                <h3>PKI Certificate Simulator</h3>
+                <p>Create Root CAs, issue X.509 certificates, and verify a full chain of trust.</p>
+            </div>
+            <div class="feature-card" onclick="switchTab('encrypt')">
+                <div class="feature-icon" style="background:rgba(96,165,250,0.1);color:var(--blue-400)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+                <h3>Hybrid File Encryption</h3>
+                <p>AES-256-CBC + RSA-2048-OAEP + SHA-256 + Digital Signatures for full-stack file security.</p>
+            </div>
+        </div>
+
+        <div class="metrics" style="margin-top:1.5rem">
             <div class="metric">
                 <div class="metric-value" id="s-users">0</div>
                 <div class="metric-label">Users</div>
@@ -122,57 +198,38 @@
                 <div class="metric-label">Integrity</div>
             </div>
             <div class="metric">
-                <div class="metric-value">RSA-Sign</div>
-                <div class="metric-label">Authentication</div>
+                <div class="metric-value">X.509</div>
+                <div class="metric-label">PKI Certs</div>
             </div>
         </div>
 
-        <!-- Pipeline -->
         <div class="card">
             <div class="card-header">
                 <span class="icon"><svg><use href="#i-layers"/></svg></span>
                 Cryptographic Pipeline
             </div>
             <div class="pipeline">
-                <div class="pipe-step completed">
-                    <span class="icon"><svg><use href="#i-file"/></svg></span> Original File
-                </div>
+                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-file"/></svg></span> Original File</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed">
-                    <span class="icon"><svg><use href="#i-hash"/></svg></span> SHA-256 Hash
-                </div>
+                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-hash"/></svg></span> SHA-256 Hash</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed">
-                    <span class="icon"><svg><use href="#i-pen-tool"/></svg></span> RSA Sign
-                </div>
+                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-pen-tool"/></svg></span> RSA Sign</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed">
-                    <span class="icon"><svg><use href="#i-lock"/></svg></span> AES-256 Encrypt
-                </div>
+                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-lock"/></svg></span> AES-256 Encrypt</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed">
-                    <span class="icon"><svg><use href="#i-key"/></svg></span> RSA Key Wrap
-                </div>
+                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-key"/></svg></span> RSA Key Wrap</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step current">
-                    <span class="icon"><svg><use href="#i-box"/></svg></span> Secure Bundle
-                </div>
+                <div class="pipe-step current"><span class="icon"><svg><use href="#i-box"/></svg></span> Secure Bundle</div>
             </div>
         </div>
 
-        <!-- Bundles list -->
         <div class="card">
             <div class="card-header">
                 <span class="icon"><svg><use href="#i-box"/></svg></span>
                 Encrypted Bundles
             </div>
             <div id="dash-bundles">
-                <div class="empty">
-                    <div class="icon-2xl" style="color:var(--text-500);margin:0 auto 12px;width:44px;height:44px">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    </div>
-                    <p>No encrypted bundles yet. Use <strong>Encrypt & Sign</strong> to create one.</p>
-                </div>
+                <div class="empty"><p>No encrypted bundles yet. Use <strong>Encrypt</strong> to create one.</p></div>
             </div>
         </div>
     </section>
@@ -205,21 +262,13 @@
                     Registered Users
                 </div>
                 <div id="users-list">
-                    <div class="empty">
-                        <div class="icon-2xl" style="color:var(--text-500);margin:0 auto 12px;width:44px;height:44px">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                        </div>
-                        <p>No users yet. Generate a key pair to get started.</p>
-                    </div>
+                    <div class="empty"><p>No users yet. Generate a key pair to get started.</p></div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-info"/></svg></span>
-                How RSA-2048 Key Pairs Work
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-info"/></svg></span> How RSA-2048 Key Pairs Work</div>
             <div class="grid grid-3">
                 <div class="info-item">
                     <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-unlock"/></svg></span> Public Key</h4>
@@ -231,7 +280,7 @@
                 </div>
                 <div class="info-item">
                     <h4><span class="icon" style="color:var(--green-400)"><svg><use href="#i-shield"/></svg></span> 2048-bit Security</h4>
-                    <p>Provides 112-bit equivalent security strength. Computationally infeasible to crack with current technology.</p>
+                    <p>Provides 112-bit equivalent security strength. Computationally infeasible to crack.</p>
                 </div>
             </div>
         </div>
@@ -244,15 +293,10 @@
 
         <div class="grid grid-2">
             <div class="card">
-                <div class="card-header">
-                    <span class="icon"><svg><use href="#i-upload"/></svg></span>
-                    File Selection
-                </div>
+                <div class="card-header"><span class="icon"><svg><use href="#i-upload"/></svg></span> File Selection</div>
                 <div class="drop-zone" id="dz">
-                    <div class="dz-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    </div>
-                    <div class="dz-text"><strong>Click to browse</strong> or drag & drop</div>
+                    <div class="dz-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                    <div class="dz-text"><strong>Click to browse</strong> or drag &amp; drop</div>
                     <div class="dz-hint">Any file type · Max 50 MB</div>
                     <input type="file" id="file-input" onchange="onFile(this)">
                 </div>
@@ -264,10 +308,7 @@
             </div>
 
             <div class="card">
-                <div class="card-header">
-                    <span class="icon"><svg><use href="#i-send"/></svg></span>
-                    Sender & Receiver
-                </div>
+                <div class="card-header"><span class="icon"><svg><use href="#i-send"/></svg></span> Sender &amp; Receiver</div>
                 <div class="field">
                     <label class="field-label" for="enc-sender">Sender (signer)</label>
                     <select class="select" id="enc-sender"><option value="">— Select sender —</option></select>
@@ -278,7 +319,7 @@
                 </div>
                 <button class="btn btn-brand btn-block" id="btn-encrypt" onclick="encryptFile()">
                     <span class="icon"><svg><use href="#i-lock"/></svg></span>
-                    Encrypt & Sign
+                    Encrypt &amp; Sign
                 </button>
             </div>
         </div>
@@ -286,41 +327,32 @@
         <div id="enc-result"></div>
 
         <div class="card" id="enc-log-card" style="display:none">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-terminal"/></svg></span>
-                Operation Log
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-terminal"/></svg></span> Operation Log</div>
             <div class="log-box" id="enc-log"></div>
         </div>
     </section>
 
     <!-- ================== PANEL: DECRYPT & VERIFY ================== -->
     <section class="panel" id="p-decrypt">
-        <h2 class="panel-title">Decrypt & Verify</h2>
+        <h2 class="panel-title">Decrypt &amp; Verify</h2>
         <p class="panel-desc">Decrypt an encrypted bundle, verify file integrity via SHA-256, and authenticate the sender's digital signature.</p>
 
         <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-box"/></svg></span>
-                Select Bundle
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-box"/></svg></span> Select Bundle</div>
             <div class="field">
                 <label class="field-label" for="dec-bundle">Encrypted Bundle</label>
                 <select class="select" id="dec-bundle"><option value="">— Select a bundle —</option></select>
             </div>
             <button class="btn btn-success btn-block" id="btn-decrypt" onclick="decryptBundle()">
                 <span class="icon"><svg><use href="#i-unlock"/></svg></span>
-                Decrypt, Verify & Authenticate
+                Decrypt, Verify &amp; Authenticate
             </button>
         </div>
 
         <div id="dec-result"></div>
 
         <div class="card" id="dec-log-card" style="display:none">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-terminal"/></svg></span>
-                Verification Log
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-terminal"/></svg></span> Verification Log</div>
             <div class="log-box" id="dec-log"></div>
         </div>
     </section>
@@ -331,10 +363,7 @@
         <p class="panel-desc">Simulate real-world attacks on encrypted bundles to test CryptoShield's tamper detection and sender verification.</p>
 
         <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-box"/></svg></span>
-                Target Bundle
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-box"/></svg></span> Target Bundle</div>
             <div class="field">
                 <label class="field-label" for="tamp-bundle">Select Bundle to Attack</label>
                 <select class="select" id="tamp-bundle"><option value="">— Select a bundle —</option></select>
@@ -342,10 +371,7 @@
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-zap"/></svg></span>
-                Choose Attack Vector
-            </div>
+            <div class="card-header"><span class="icon"><svg><use href="#i-zap"/></svg></span> Choose Attack Vector</div>
             <div class="grid grid-3">
                 <div class="attack-card" onclick="doTamper('ciphertext')">
                     <div class="attack-icon">
@@ -372,22 +398,301 @@
         </div>
 
         <div id="tamp-result"></div>
+    </section>
+
+    <!-- ================== PANEL: IMAGE ENCRYPTION ================== -->
+    <section class="panel" id="p-imgcrypt">
+        <h2 class="panel-title">Image Encryption — Visual Preview</h2>
+        <p class="panel-desc">Encrypt an image with AES-256-CBC at the pixel level. See the encrypted "noise" image and restore it perfectly with the key.</p>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-upload"/></svg></span> Select Image</div>
+                <div class="drop-zone" id="img-dz">
+                    <div class="dz-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                    <div class="dz-text"><strong>Click to browse</strong> image (PNG/JPG)</div>
+                    <div class="dz-hint">Max 10 MB · PNG or JPG</div>
+                    <input type="file" id="img-input" accept="image/*" onchange="onImgFile(this)">
+                </div>
+                <div id="img-file-info" style="display:none" class="file-badge">
+                    <span class="icon"><svg><use href="#i-image"/></svg></span>
+                    <span id="img-file-name">—</span>
+                </div>
+                <div style="margin-top:1rem">
+                    <button class="btn btn-brand btn-block" id="btn-img-encrypt" onclick="encryptImage()">
+                        <span class="icon"><svg><use href="#i-lock"/></svg></span>
+                        Encrypt Image
+                    </button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-info"/></svg></span> How it Works</div>
+                <div class="info-item" style="margin-bottom:1rem">
+                    <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-image"/></svg></span> Pixel-Level Encryption</h4>
+                    <p>The raw pixel bytes (RGB channels) of the image are extracted and encrypted using AES-256-CBC. The resulting ciphertext bytes are then mapped back to pixels — creating a visually random "noise" image.</p>
+                </div>
+                <div class="info-item">
+                    <h4><span class="icon" style="color:var(--green-400)"><svg><use href="#i-unlock"/></svg></span> Perfect Decryption</h4>
+                    <p>With the AES key and IV, the original pixels are recovered byte-for-byte. The restored image is identical to the original.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="img-crypt-result"></div>
+
+        <!-- Decryption section -->
+        <div class="card" id="img-dec-section" style="display:none">
+            <div class="card-header"><span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt Image</div>
+            <p style="color:var(--text-400);font-size:0.85rem;margin-bottom:1rem">The AES key and ciphertext are loaded automatically after encryption. Click below to decrypt.</p>
+            <button class="btn btn-success btn-block" id="btn-img-decrypt" onclick="decryptImage()">
+                <span class="icon"><svg><use href="#i-unlock"/></svg></span>
+                Decrypt &amp; Restore Image
+            </button>
+            <div id="img-dec-result" style="margin-top:1rem"></div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: STEGANOGRAPHY ================== -->
+    <section class="panel" id="p-steg">
+        <h2 class="panel-title">Steganography Lab — LSB Encoding</h2>
+        <p class="panel-desc">Hide a secret message inside an image by modifying the Least Significant Bit of each pixel channel. The two images are visually identical.</p>
+
+        <div class="steg-tabs" id="steg-sub-tabs">
+            <button class="steg-tab active" data-steg="hide" onclick="switchStegTab('hide')">
+                <span class="icon"><svg><use href="#i-eye-off"/></svg></span> Hide Message
+            </button>
+            <button class="steg-tab" data-steg="reveal" onclick="switchStegTab('reveal')">
+                <span class="icon"><svg><use href="#i-eye"/></svg></span> Reveal Message
+            </button>
+        </div>
+
+        <!-- Hide -->
+        <div id="steg-hide-panel">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header"><span class="icon"><svg><use href="#i-upload"/></svg></span> Cover Image</div>
+                    <div class="drop-zone" id="steg-dz">
+                        <div class="dz-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                        <div class="dz-text"><strong>Click to browse</strong> cover image</div>
+                        <div class="dz-hint">PNG or JPG · Max 10 MB</div>
+                        <input type="file" id="steg-input" accept="image/*" onchange="onStegFile(this)">
+                    </div>
+                    <div id="steg-file-info" style="display:none" class="file-badge">
+                        <span class="icon"><svg><use href="#i-image"/></svg></span>
+                        <span id="steg-file-name">—</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="icon"><svg><use href="#i-edit"/></svg></span> Secret Message</div>
+                    <div class="field">
+                        <label class="field-label" for="steg-msg">Your Secret Message</label>
+                        <textarea class="input" id="steg-msg" rows="5" placeholder="Enter the secret message to hide…" style="resize:vertical"></textarea>
+                    </div>
+                    <button class="btn btn-brand btn-block" id="btn-steg-hide" onclick="hideMessage()">
+                        <span class="icon"><svg><use href="#i-eye-off"/></svg></span>
+                        Hide Message in Image
+                    </button>
+                </div>
+            </div>
+            <div id="steg-hide-result"></div>
+        </div>
+
+        <!-- Reveal -->
+        <div id="steg-reveal-panel" style="display:none">
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-eye"/></svg></span> Stego Image (with hidden message)</div>
+                <div class="drop-zone" id="steg-reveal-dz">
+                    <div class="dz-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                    <div class="dz-text"><strong>Click to browse</strong> stego image</div>
+                    <div class="dz-hint">Upload the image with the hidden message</div>
+                    <input type="file" id="steg-reveal-input" accept="image/*" onchange="onStegRevealFile(this)">
+                </div>
+                <div id="steg-reveal-info" style="display:none" class="file-badge">
+                    <span class="icon"><svg><use href="#i-image"/></svg></span>
+                    <span id="steg-reveal-name">—</span>
+                </div>
+                <div style="margin-top:1rem">
+                    <button class="btn btn-success btn-block" id="btn-steg-reveal" onclick="revealMessage()">
+                        <span class="icon"><svg><use href="#i-eye"/></svg></span>
+                        Extract Hidden Message
+                    </button>
+                </div>
+            </div>
+            <div id="steg-reveal-result"></div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: CIPHER PLAYGROUND ================== -->
+    <section class="panel" id="p-playground">
+        <h2 class="panel-title">Cipher Algorithm Playground</h2>
+        <p class="panel-desc">Encrypt the same plaintext using four different algorithms simultaneously. Compare their output, key size, and security level.</p>
 
         <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-info"/></svg></span>
-                How Detection Works
+            <div class="card-header"><span class="icon"><svg><use href="#i-edit"/></svg></span> Plaintext Input</div>
+            <div class="field">
+                <label class="field-label" for="pg-text">Plaintext</label>
+                <textarea class="input" id="pg-text" rows="4" placeholder="Enter any text to encrypt (max 2000 chars)…" style="resize:vertical">The quick brown fox jumps over the lazy dog.</textarea>
             </div>
-            <div class="grid grid-2">
-                <div class="info-item">
-                    <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-hash"/></svg></span> Integrity — SHA-256</h4>
-                    <p>After decryption, the file's SHA-256 hash is recomputed and compared to the stored original. Even a single bit change produces a completely different hash value.</p>
+            <div class="grid grid-2" style="margin-bottom:1rem">
+                <div class="field" style="margin-bottom:0">
+                    <label class="field-label" for="pg-caesar-shift">Caesar Shift (1–25)</label>
+                    <input class="input" type="number" id="pg-caesar-shift" value="13" min="1" max="25">
+                </div>
+                <div class="field" style="margin-bottom:0">
+                    <label class="field-label" for="pg-vigenere-key">Vigenère Key</label>
+                    <input class="input" type="text" id="pg-vigenere-key" value="CRYPTO" placeholder="e.g. CRYPTO">
+                </div>
+            </div>
+            <button class="btn btn-brand btn-block" id="btn-playground" onclick="runPlayground()">
+                <span class="icon"><svg><use href="#i-cpu"/></svg></span>
+                Run All Ciphers &amp; Hash Functions
+            </button>
+        </div>
+
+        <div id="pg-result"></div>
+    </section>
+
+    <!-- ================== PANEL: QR VAULT ================== -->
+    <section class="panel" id="p-qrvault">
+        <h2 class="panel-title">QR Code Secret Vault</h2>
+        <p class="panel-desc">Encrypt a message with AES-256, embed the ciphertext into a QR code, and share it publicly. Only the keyholder can decrypt it.</p>
+
+        <div class="qr-tabs">
+            <button class="steg-tab active" data-qr="encrypt" onclick="switchQrTab('encrypt')">
+                <span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt → QR
+            </button>
+            <button class="steg-tab" data-qr="decrypt" onclick="switchQrTab('decrypt')">
+                <span class="icon"><svg><use href="#i-unlock"/></svg></span> Decode QR
+            </button>
+        </div>
+
+        <!-- QR Encrypt -->
+        <div id="qr-enc-panel">
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-edit"/></svg></span> Secret Message</div>
+                <div class="field">
+                    <label class="field-label" for="qr-msg">Message to Encrypt</label>
+                    <textarea class="input" id="qr-msg" rows="4" placeholder="Enter a secret message (max 500 chars)…" style="resize:vertical"></textarea>
+                </div>
+                <button class="btn btn-brand btn-block" id="btn-qr-enc" onclick="qrEncrypt()">
+                    <span class="icon"><svg><use href="#i-qr-code"/></svg></span>
+                    Encrypt &amp; Generate QR Code
+                </button>
+            </div>
+            <div id="qr-enc-result"></div>
+        </div>
+
+        <!-- QR Decrypt -->
+        <div id="qr-dec-panel" style="display:none">
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-unlock"/></svg></span> Decode &amp; Decrypt</div>
+                <div class="field">
+                    <label class="field-label" for="qr-payload">QR Payload (Base64 IV+Ciphertext)</label>
+                    <textarea class="input" id="qr-payload" rows="3" placeholder="Paste the QR payload here…" style="resize:vertical"></textarea>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="qr-key">AES-256 Key (Base64)</label>
+                    <input class="input" type="text" id="qr-key" placeholder="Paste the AES key here…">
+                </div>
+                <button class="btn btn-success btn-block" id="btn-qr-dec" onclick="qrDecrypt()">
+                    <span class="icon"><svg><use href="#i-unlock"/></svg></span>
+                    Decrypt Message
+                </button>
+            </div>
+            <div id="qr-dec-result"></div>
+        </div>
+    </section>
+
+    <!-- ================== PANEL: PKI SIMULATOR ================== -->
+    <section class="panel" id="p-pki">
+        <h2 class="panel-title">Digital PKI Certificate Simulator</h2>
+        <p class="panel-desc">Simulate a Public Key Infrastructure — create a Root Certificate Authority (CA), issue X.509 certificates signed by it, and verify the chain of trust.</p>
+
+        <div class="pki-flow">
+            <div class="pki-step-badge">Step 1 — Create Root CA</div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-award"/></svg></span> Create Root Certificate Authority</div>
+                <div class="field">
+                    <label class="field-label" for="pki-ca-cn">CA Common Name</label>
+                    <input class="input" type="text" id="pki-ca-cn" placeholder="e.g. MyRootCA">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="pki-ca-org">Organisation</label>
+                    <input class="input" type="text" id="pki-ca-org" value="CryptoShield">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="pki-ca-country">Country Code (2-letter)</label>
+                    <input class="input" type="text" id="pki-ca-country" value="IN" maxlength="2">
+                </div>
+                <button class="btn btn-brand btn-block" id="btn-pki-ca" onclick="pkiCreateCA()">
+                    <span class="icon"><svg><use href="#i-award"/></svg></span>
+                    Create Root CA
+                </button>
+                <div id="pki-ca-result"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="icon"><svg><use href="#i-info"/></svg></span> PKI Chain of Trust</div>
+                <div class="info-item" style="margin-bottom:1rem">
+                    <h4><span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-award"/></svg></span> Root CA</h4>
+                    <p>Self-signed certificate that is trusted by default. Signs all subordinate certificates. Kept offline in production.</p>
+                </div>
+                <div class="info-item" style="margin-bottom:1rem">
+                    <h4><span class="icon" style="color:var(--green-400)"><svg><use href="#i-globe"/></svg></span> End-Entity Certificate</h4>
+                    <p>Issued by the CA to a specific entity (e.g. a website, user, or server). Contains their public key.</p>
                 </div>
                 <div class="info-item">
-                    <h4><span class="icon" style="color:var(--indigo-400)"><svg><use href="#i-pen-tool"/></svg></span> Authentication — Digital Signature</h4>
-                    <p>The sender signs the file hash with their RSA private key. The receiver verifies using the sender's public key. An invalid signature means the sender cannot be trusted.</p>
+                    <h4><span class="icon" style="color:var(--indigo-400)"><svg><use href="#i-check-circle"/></svg></span> Verification</h4>
+                    <p>Anyone with the CA's public key can verify that the entity's certificate was legitimately issued.</p>
                 </div>
             </div>
+        </div>
+
+        <div class="pki-flow" style="margin-top:1rem">
+            <div class="pki-step-badge">Step 2 — Issue Certificate</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><span class="icon"><svg><use href="#i-globe"/></svg></span> Issue Certificate for Entity</div>
+            <div class="grid grid-3">
+                <div class="field">
+                    <label class="field-label" for="pki-cert-ca">Issuing CA</label>
+                    <select class="select" id="pki-cert-ca"><option value="">— Select CA —</option></select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="pki-cert-cn">Entity Common Name</label>
+                    <input class="input" type="text" id="pki-cert-cn" placeholder="e.g. www.example.com">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="pki-cert-org">Organisation</label>
+                    <input class="input" type="text" id="pki-cert-org" value="Example Corp">
+                </div>
+            </div>
+            <button class="btn btn-success btn-block" id="btn-pki-issue" onclick="pkiIssueCert()">
+                <span class="icon"><svg><use href="#i-pen-tool"/></svg></span>
+                Issue Certificate
+            </button>
+            <div id="pki-issue-result"></div>
+        </div>
+
+        <div class="pki-flow" style="margin-top:1rem">
+            <div class="pki-step-badge">Step 3 — Verify Certificate</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><span class="icon"><svg><use href="#i-check-circle"/></svg></span> Verify Certificate Chain</div>
+            <div class="field">
+                <label class="field-label" for="pki-verify-cn">Entity to Verify</label>
+                <select class="select" id="pki-verify-cn"><option value="">— Select entity —</option></select>
+            </div>
+            <button class="btn btn-brand btn-block" id="btn-pki-verify" onclick="pkiVerify()">
+                <span class="icon"><svg><use href="#i-shield"/></svg></span>
+                Verify Certificate Chain
+            </button>
+            <div id="pki-verify-result"></div>
         </div>
     </section>
 
@@ -397,15 +702,19 @@
 <script>
 // ── State
 let users = [], bundles = [], selectedFile = null;
+let imgEncryptData = null;    // holds AES key, ciphertext, width, height after image encrypt
+let stegFile = null, stegRevealFile = null, imgFile = null;
+let pkiCAs = [], pkiCerts = [];
+let qrActiveTab = 'encrypt';
 
-// ── Inline SVG strings for JS-generated HTML
+// ── SVG icons
 const IC = {
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
-    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    x:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
     alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 010-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
-    box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+    info:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    key:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 010-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+    box:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
 };
 
 // ── Tab Navigation
@@ -419,6 +728,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById('p-' + tabName).classList.add('active');
+    refreshData();
+}
+
 // ── Utilities
 const fmt = bytes => {
     if (!bytes) return '0 B';
@@ -430,6 +747,7 @@ const ts = () => new Date().toLocaleTimeString();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
 const api = async (url, o = {}) => { try { const r = await fetch(url, o); return await r.json(); } catch(e) { return {error:e.message}; } };
+const copyToClipboard = text => { navigator.clipboard.writeText(text).catch(() => {}); };
 
 function addLog(id, msg, cls='') {
     const c = document.getElementById(id);
@@ -446,14 +764,14 @@ async function refreshData() {
     if (!u.error) { users = u; renderUsers(); renderDropdowns(); document.getElementById('s-users').textContent = users.length; }
     const b = await api('/api/bundles');
     if (!b.error) { bundles = b; renderBundles(); renderBundleDropdowns(); document.getElementById('s-bundles').textContent = bundles.length; }
+    const pkiData = await api('/api/pki/list');
+    if (!pkiData.error) { pkiCAs = pkiData.cas; pkiCerts = pkiData.certs; renderPKIDropdowns(); }
 }
 
 function renderUsers() {
     const el = document.getElementById('users-list');
     if (!users.length) { el.innerHTML = '<div class="empty"><p>No users yet.</p></div>'; return; }
-    el.innerHTML = users.map(u =>
-        `<span class="chip"><span class="icon">${IC.key}</span> ${esc(u.username)}</span>`
-    ).join('');
+    el.innerHTML = users.map(u => `<span class="chip"><span class="icon">${IC.key}</span> ${esc(u.username)}</span>`).join('');
 }
 
 function renderDropdowns() {
@@ -493,11 +811,20 @@ function renderBundleDropdowns() {
     });
 }
 
+function renderPKIDropdowns() {
+    const caSelect = document.getElementById('pki-cert-ca');
+    const v = caSelect.value;
+    caSelect.innerHTML = '<option value="">— Select CA —</option>';
+    pkiCAs.forEach(ca => { caSelect.innerHTML += `<option value="${esc(ca)}" ${ca===v?'selected':''}>${esc(ca)}</option>`; });
+
+    const certSelect = document.getElementById('pki-verify-cn');
+    const v2 = certSelect.value;
+    certSelect.innerHTML = '<option value="">— Select entity —</option>';
+    pkiCerts.forEach(c => { certSelect.innerHTML += `<option value="${esc(c.cn)}" ${c.cn===v2?'selected':''}>${esc(c.cn)} (issued by ${esc(c.issued_by)})</option>`; });
+}
+
 function goDecrypt(bid) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelector('[data-tab="decrypt"]').classList.add('active');
-    document.getElementById('p-decrypt').classList.add('active');
+    switchTab('decrypt');
     refreshData().then(() => { document.getElementById('dec-bundle').value = bid; });
 }
 
@@ -574,7 +901,7 @@ async function encryptFile() {
     fd.append('file', selectedFile); fd.append('sender', sender); fd.append('receiver', receiver);
     const d = await api('/api/encrypt', { method:'POST', body:fd });
 
-    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt & Sign`;
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt &amp; Sign`;
     const el = document.getElementById('enc-result');
 
     if (d.error) {
@@ -583,7 +910,6 @@ async function encryptFile() {
     } else {
         addLog('enc-log', 'Bundle created successfully', 'ok');
         addLog('enc-log', `Bundle ID: ${d.bundle_id}`, 'ok');
-        addLog('enc-log', `Suite: ${d.algorithm_suite}`, 'info');
         el.innerHTML = `
         <div class="result">
             <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
@@ -593,7 +919,6 @@ async function encryptFile() {
                 <div class="result-row"><span class="result-key">Original Size</span><span class="result-val">${fmt(d.original_size)}</span></div>
                 <div class="result-row"><span class="result-key">Encrypted Size</span><span class="result-val">${fmt(d.encrypted_size)}</span></div>
                 <div class="result-row"><span class="result-key">Suite</span><span class="result-val accent">${d.algorithm_suite}</span></div>
-                <div class="result-row"><span class="result-key">AES Key Protected</span><span class="result-val ok">Yes (RSA-OAEP)</span></div>
                 <div class="mono-block"><span class="mono-label">SHA-256 File Hash</span>${d.file_hash_sha256}</div>
                 <div class="mono-block"><span class="mono-label">Digital Signature (preview)</span>${d.signature_preview}</div>
             </div>
@@ -619,24 +944,20 @@ async function decryptBundle() {
     await sleep(250); addLog('dec-log', 'Verifying digital signature…');
 
     const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
-    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify & Authenticate`;
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify &amp; Authenticate`;
 
     const el = document.getElementById('dec-result');
     if (d.error) {
         addLog('dec-log', `ERROR: ${d.error}`, 'err');
-        if (d.tamper_detected) addLog('dec-log', 'TAMPER DETECTED — file compromised', 'err');
-        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div><div class="result-body">
-            ${d.integrity ? `<div class="result-row"><span class="result-key">Integrity</span><span class="result-val err">${d.integrity}</span></div>` : ''}
-            ${d.authentication ? `<div class="result-row"><span class="result-key">Authentication</span><span class="result-val err">${d.authentication}</span></div>` : ''}
-        </div></div>`;
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
         return;
     }
 
     const bad = d.tamper_detected;
     if (bad) {
         addLog('dec-log', 'TAMPER DETECTED', 'err');
-        if (!d.hash_match) addLog('dec-log', '  SHA-256 hash mismatch — file modified', 'err');
-        if (!d.signature_valid) addLog('dec-log', '  Signature invalid — sender unverified', 'err');
+        if (!d.hash_match) addLog('dec-log', '  SHA-256 hash mismatch', 'err');
+        if (!d.signature_valid) addLog('dec-log', '  Signature invalid', 'err');
     } else {
         addLog('dec-log', 'Integrity check PASSED (SHA-256)', 'ok');
         addLog('dec-log', 'Sender authentication VERIFIED', 'ok');
@@ -653,8 +974,8 @@ async function decryptBundle() {
             <div class="result-row"><span class="result-key">Integrity (SHA-256)</span><span class="result-val ${d.hash_match?'ok':'err'}">${d.integrity}</span></div>
             <div class="result-row"><span class="result-key">Authentication</span><span class="result-val ${d.signature_valid?'ok':'err'}">${d.authentication}</span></div>
             <div class="hash-compare">
-                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Original Hash (stored)</div><div class="hash-val">${d.original_hash}</div></div>
-                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Computed Hash (after decryption)</div><div class="hash-val">${d.computed_hash}</div></div>
+                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Original Hash</div><div class="hash-val">${d.original_hash}</div></div>
+                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Computed Hash</div><div class="hash-val">${d.computed_hash}</div></div>
             </div>
             ${d.is_text ? `<div class="mono-block"><span class="mono-label">Decrypted Preview</span>${esc(d.file_preview)}</div>` : `<div style="margin-top:10px;color:var(--text-400);font-size:0.82rem">Binary file — ${fmt(d.decrypted_size)}</div>`}
         </div>
@@ -676,14 +997,455 @@ async function doTamper(type) {
             <div class="result-body">
                 <div class="result-row"><span class="result-key">Attack Type</span><span class="result-val warn">${d.tamper_type}</span></div>
                 <div class="result-row"><span class="result-key">Detail</span><span class="result-val">${esc(d.detail)}</span></div>
-                <div class="result-row"><span class="result-key">Bundle</span><span class="result-val accent">${d.bundle_id}</span></div>
-                <div class="callout callout-info">
-                    <span class="icon">${IC.info}</span>
-                    <span>Now go to <strong>Decrypt & Verify</strong> and try decrypting this bundle to see CryptoShield detect the tampering.</span>
-                </div>
+                <div class="callout callout-info"><span class="icon">${IC.info}</span><span>Now go to <strong>Decrypt &amp; Verify</strong> to see CryptoShield detect the tampering.</span></div>
             </div>
         </div>`;
     }
+}
+
+// ── Image Encryption
+function onImgFile(inp) {
+    if (inp.files.length) {
+        imgFile = inp.files[0];
+        document.getElementById('img-file-info').style.display = 'inline-flex';
+        document.getElementById('img-file-name').textContent = imgFile.name;
+    }
+}
+
+async function encryptImage() {
+    if (!imgFile) return alert('Select an image first');
+    const btn = document.getElementById('btn-img-encrypt');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Encrypting…';
+
+    const fd = new FormData();
+    fd.append('image', imgFile);
+    const d = await api('/api/image-encrypt', { method:'POST', body:fd });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt Image`;
+
+    const el = document.getElementById('img-crypt-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    imgEncryptData = { aes_key: d.aes_key, iv: d.iv, ciphertext: d.ciphertext, width: d.width, height: d.height };
+    document.getElementById('img-dec-section').style.display = 'block';
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Image Encrypted — AES-256-CBC</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Algorithm</span><span class="result-val accent">${d.algorithm}</span></div>
+            <div class="result-row"><span class="result-key">Dimensions</span><span class="result-val">${d.width} × ${d.height} px</span></div>
+            <div class="result-row"><span class="result-key">Original Size</span><span class="result-val">${fmt(d.original_size)}</span></div>
+            <div class="result-row"><span class="result-key">Encrypted Size</span><span class="result-val">${fmt(d.encrypted_size)}</span></div>
+        </div>
+    </div>
+    <div class="img-compare">
+        <div class="img-compare-col">
+            <div class="img-compare-label">Original Image</div>
+            <img src="data:image/png;base64,${d.original_image}" alt="Original" class="preview-img">
+        </div>
+        <div class="img-compare-col">
+            <div class="img-compare-label">Encrypted Image (AES noise)</div>
+            <img src="data:image/png;base64,${d.encrypted_image}" alt="Encrypted Noise" class="preview-img encrypted-preview">
+        </div>
+    </div>`;
+}
+
+async function decryptImage() {
+    if (!imgEncryptData) return alert('Encrypt an image first');
+    const btn = document.getElementById('btn-img-decrypt');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Decrypting…';
+
+    const d = await api('/api/image-decrypt', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(imgEncryptData)
+    });
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt &amp; Restore Image`;
+
+    const el = document.getElementById('img-dec-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Image Decrypted Successfully</div>
+        <div class="result-body"><p style="color:var(--text-300);font-size:0.85rem;margin-bottom:1rem">The restored image is byte-for-byte identical to the original.</p></div>
+    </div>
+    <div class="img-compare-col" style="max-width:400px;margin-top:1rem">
+        <div class="img-compare-label">Restored Image</div>
+        <img src="data:image/png;base64,${d.decrypted_image}" alt="Decrypted" class="preview-img" style="border-color:rgba(16,185,129,0.4)">
+    </div>`;
+}
+
+// ── Steganography
+function switchStegTab(tab) {
+    document.querySelectorAll('.steg-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-steg="${tab}"]`).classList.add('active');
+    document.getElementById('steg-hide-panel').style.display   = tab === 'hide'   ? 'block' : 'none';
+    document.getElementById('steg-reveal-panel').style.display = tab === 'reveal' ? 'block' : 'none';
+}
+
+function onStegFile(inp) {
+    if (inp.files.length) {
+        stegFile = inp.files[0];
+        document.getElementById('steg-file-info').style.display = 'inline-flex';
+        document.getElementById('steg-file-name').textContent = stegFile.name;
+    }
+}
+
+function onStegRevealFile(inp) {
+    if (inp.files.length) {
+        stegRevealFile = inp.files[0];
+        document.getElementById('steg-reveal-info').style.display = 'inline-flex';
+        document.getElementById('steg-reveal-name').textContent = stegRevealFile.name;
+    }
+}
+
+async function hideMessage() {
+    if (!stegFile) return alert('Select a cover image');
+    const msg = document.getElementById('steg-msg').value.trim();
+    if (!msg) return alert('Enter a secret message');
+
+    const btn = document.getElementById('btn-steg-hide');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Hiding…';
+
+    const fd = new FormData();
+    fd.append('image', stegFile);
+    fd.append('message', msg);
+    const d = await api('/api/steg-hide', { method:'POST', body:fd });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-eye-off"/></svg></span> Hide Message in Image`;
+
+    const el = document.getElementById('steg-hide-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Message Hidden Successfully</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Method</span><span class="result-val accent">${d.method}</span></div>
+            <div class="result-row"><span class="result-key">Message Length</span><span class="result-val">${d.message_length} bytes</span></div>
+            <div class="result-row"><span class="result-key">Bits Used</span><span class="result-val">${d.bits_used} bits (${d.bits_used} pixel channels modified)</span></div>
+            <div class="result-row"><span class="result-key">Max Capacity</span><span class="result-val">${d.capacity_bytes} bytes</span></div>
+            <div class="callout callout-info"><span class="icon">${IC.info}</span><span>${d.note}</span></div>
+        </div>
+    </div>
+    <div class="img-compare">
+        <div class="img-compare-col">
+            <div class="img-compare-label">Original Image</div>
+            <img src="data:image/png;base64,${d.original_image}" alt="Original" class="preview-img">
+        </div>
+        <div class="img-compare-col">
+            <div class="img-compare-label">Stego Image (message hidden inside)</div>
+            <img src="data:image/png;base64,${d.steg_image}" alt="Stego" class="preview-img" style="border-color:rgba(99,102,241,0.4)">
+            <a href="data:image/png;base64,${d.steg_image}" download="stego_image.png" class="btn btn-ghost" style="margin-top:8px;width:100%;text-align:center;display:flex;justify-content:center">Download Stego Image</a>
+        </div>
+    </div>`;
+}
+
+async function revealMessage() {
+    if (!stegRevealFile) return alert('Select a stego image');
+    const btn = document.getElementById('btn-steg-reveal');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Extracting…';
+
+    const fd = new FormData();
+    fd.append('image', stegRevealFile);
+    const d = await api('/api/steg-reveal', { method:'POST', body:fd });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-eye"/></svg></span> Extract Hidden Message`;
+
+    const el = document.getElementById('steg-reveal-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Hidden Message Extracted</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Method</span><span class="result-val accent">${d.method}</span></div>
+            <div class="result-row"><span class="result-key">Message Length</span><span class="result-val">${d.message_length} bytes</span></div>
+            <div class="mono-block" style="margin-top:10px;border-color:rgba(16,185,129,0.3)">
+                <span class="mono-label">Extracted Secret Message</span>
+                ${esc(d.message)}
+            </div>
+        </div>
+    </div>`;
+}
+
+// ── Cipher Playground
+const SECURITY_COLORS = { strong: 'ok', weak: 'err', very_weak: 'err', none: 'err' };
+const SECURITY_LABELS = { strong: 'STRONG ✅', weak: 'WEAK ❌', very_weak: 'VERY WEAK ❌', none: 'NONE ❌' };
+
+async function runPlayground() {
+    const text = document.getElementById('pg-text').value.trim();
+    if (!text) return alert('Enter some text');
+    const shift = parseInt(document.getElementById('pg-caesar-shift').value) || 13;
+    const vkey  = document.getElementById('pg-vigenere-key').value.trim() || 'CRYPTO';
+
+    const btn = document.getElementById('btn-playground');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Running all ciphers…';
+
+    const d = await api('/api/cipher-playground', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text, caesar_shift: shift, vigenere_key: vkey })
+    });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-cpu"/></svg></span> Run All Ciphers &amp; Hash Functions`;
+
+    const el = document.getElementById('pg-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    const r = d.results;
+    el.innerHTML = `
+    <div class="cipher-grid">
+        ${cipherCard('AES-256-CBC', r.aes256, r.aes256.hex.substring(0,64)+'…')}
+        ${cipherCard('DES-CBC', r.des, r.des.hex.substring(0,64)+'…')}
+        ${cipherCard('Caesar Cipher', r.caesar, r.caesar.ciphertext.substring(0,200))}
+        ${cipherCard('Vigenère Cipher', r.vigenere, r.vigenere.ciphertext.substring(0,200))}
+    </div>
+    <div class="card" style="margin-top:1rem">
+        <div class="card-header"><span class="icon"><svg><use href="#i-hash"/></svg></span> Hash Functions (same input, different algorithms)</div>
+        <div class="result-row"><span class="result-key">MD5 (broken)</span><span class="result-val err mono-val">${r.hashes.md5}</span></div>
+        <div class="result-row"><span class="result-key">SHA-1 (deprecated)</span><span class="result-val warn mono-val">${r.hashes.sha1}</span></div>
+        <div class="result-row"><span class="result-key">SHA-256 (current standard)</span><span class="result-val ok mono-val">${r.hashes.sha256}</span></div>
+        <div class="callout callout-info" style="margin-top:0.5rem"><span class="icon">${IC.info}</span><span>Even though the input is the same, every hash algorithm produces a completely different output. Even a 1-character change in input causes total avalanche effect.</span></div>
+    </div>`;
+}
+
+function cipherCard(title, cipher, preview) {
+    const sec = cipher.security;
+    const cls = SECURITY_COLORS[sec] || '';
+    const label = SECURITY_LABELS[sec] || sec;
+    return `
+    <div class="cipher-card">
+        <div class="cipher-card-title">${title}</div>
+        <div class="result-row" style="border:none;padding:4px 0"><span class="result-key">Type</span><span class="result-val" style="font-size:0.75rem">${cipher.type}</span></div>
+        <div class="result-row" style="border:none;padding:4px 0"><span class="result-key">Key Size</span><span class="result-val accent">${cipher.key_bits !== undefined ? cipher.key_bits + '-bit' : cipher.key || cipher.shift + '-shift'}</span></div>
+        <div class="result-row" style="border:none;padding:4px 0"><span class="result-key">Output Len</span><span class="result-val">${cipher.output_len !== undefined ? cipher.output_len + ' bytes' : 'same as input'}</span></div>
+        <div class="result-row" style="border:none;padding:4px 0"><span class="result-key">Security</span><span class="result-val ${cls}">${label}</span></div>
+        <div class="mono-block" style="margin-top:8px;max-height:90px;overflow:hidden">
+            <span class="mono-label">Ciphertext</span>
+            ${esc(preview)}
+        </div>
+        ${cipher.warning ? `<div class="callout callout-warn" style="margin-top:8px;font-size:0.78rem"><span class="icon">${IC.alert}</span><span>${cipher.warning}</span></div>` : ''}
+    </div>`;
+}
+
+// ── QR Vault
+function switchQrTab(tab) {
+    qrActiveTab = tab;
+    document.querySelectorAll('.qr-tabs .steg-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-qr="${tab}"]`).classList.add('active');
+    document.getElementById('qr-enc-panel').style.display = tab === 'encrypt' ? 'block' : 'none';
+    document.getElementById('qr-dec-panel').style.display = tab === 'decrypt' ? 'block' : 'none';
+}
+
+async function qrEncrypt() {
+    const msg = document.getElementById('qr-msg').value.trim();
+    if (!msg) return alert('Enter a message');
+
+    const btn = document.getElementById('btn-qr-enc');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Generating QR…';
+
+    const d = await api('/api/qr-encrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message: msg}) });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-qr-code"/></svg></span> Encrypt &amp; Generate QR Code`;
+
+    const el = document.getElementById('qr-enc-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Message Encrypted &amp; QR Generated</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Algorithm</span><span class="result-val accent">${d.algorithm}</span></div>
+            <div class="result-row"><span class="result-key">Message Length</span><span class="result-val">${d.message_length} chars</span></div>
+            <div class="callout callout-info"><span class="icon">${IC.info}</span><span>${d.note}</span></div>
+        </div>
+    </div>
+    <div class="qr-result-layout">
+        <div class="qr-code-box">
+            <div class="img-compare-label" style="margin-bottom:8px">Encrypted QR Code</div>
+            <img src="data:image/png;base64,${d.qr_image}" alt="QR Code" class="qr-preview">
+            <a href="data:image/png;base64,${d.qr_image}" download="cryptoshield_qr.png" class="btn btn-ghost" style="margin-top:10px;width:100%;display:flex;justify-content:center">Download QR Code</a>
+        </div>
+        <div class="qr-keys-box">
+            <div class="mono-block" style="margin-bottom:1rem">
+                <span class="mono-label">AES-256 Key (Base64) — KEEP SECRET</span>
+                ${esc(d.aes_key)}
+                <button class="copy-btn" onclick="copyToClipboard('${d.aes_key}')">Copy</button>
+            </div>
+            <div class="mono-block">
+                <span class="mono-label">QR Payload (Base64 IV+CT) — Safe to share</span>
+                ${esc(d.payload_b64.substring(0, 120))}…
+                <button class="copy-btn" onclick="copyToClipboard('${d.payload_b64}')">Copy</button>
+            </div>
+            <button class="btn btn-success" style="margin-top:1rem;width:100%;display:flex;justify-content:center" onclick="prefillQrDecrypt('${d.payload_b64}', '${d.aes_key}')">
+                Try Decrypting This →
+            </button>
+        </div>
+    </div>`;
+}
+
+function prefillQrDecrypt(payload, key) {
+    switchQrTab('decrypt');
+    document.getElementById('qr-payload').value = payload;
+    document.getElementById('qr-key').value = key;
+}
+
+async function qrDecrypt() {
+    const payload = document.getElementById('qr-payload').value.trim();
+    const key     = document.getElementById('qr-key').value.trim();
+    if (!payload || !key) return alert('Enter both payload and AES key');
+
+    const btn = document.getElementById('btn-qr-dec');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Decrypting…';
+
+    const d = await api('/api/qr-decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({payload_b64: payload, aes_key: key}) });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt Message`;
+
+    const el = document.getElementById('qr-dec-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> Message Decrypted Successfully</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Algorithm</span><span class="result-val accent">${d.algorithm}</span></div>
+            <div class="mono-block" style="margin-top:10px;border-color:rgba(16,185,129,0.3)">
+                <span class="mono-label">Decrypted Message</span>
+                ${esc(d.message)}
+            </div>
+        </div>
+    </div>`;
+}
+
+// ── PKI Simulator
+async function pkiCreateCA() {
+    const cn      = document.getElementById('pki-ca-cn').value.trim();
+    const org     = document.getElementById('pki-ca-org').value.trim();
+    const country = document.getElementById('pki-ca-country').value.trim();
+
+    if (!cn) return alert('Enter a CA Common Name');
+
+    const btn = document.getElementById('btn-pki-ca');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Creating CA…';
+
+    const d = await api('/api/pki/create-ca', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cn, org, country}) });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-award"/></svg></span> Create Root CA`;
+
+    const el = document.getElementById('pki-ca-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result" style="margin-top:1rem"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result" style="margin-top:1rem">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Subject</span><span class="result-val">${esc(d.subject)}</span></div>
+            <div class="result-row"><span class="result-key">Issuer</span><span class="result-val">${esc(d.issuer)}</span></div>
+            <div class="result-row"><span class="result-key">Valid For</span><span class="result-val accent">${d.valid_years} years</span></div>
+            <div class="result-row"><span class="result-key">Signature Algo</span><span class="result-val">${d.signature_algo}</span></div>
+            <div class="result-row"><span class="result-key">CA Certificate</span><span class="result-val ok">Self-Signed ✅</span></div>
+            <div class="mono-block" style="margin-top:10px"><span class="mono-label">PEM Certificate</span>${esc(d.cert_pem.substring(0, 300))}…</div>
+        </div>
+    </div>`;
+    refreshData();
+}
+
+async function pkiIssueCert() {
+    const ca_name   = document.getElementById('pki-cert-ca').value;
+    const entity_cn = document.getElementById('pki-cert-cn').value.trim();
+    const org       = document.getElementById('pki-cert-org').value.trim();
+
+    if (!ca_name) return alert('Select a CA');
+    if (!entity_cn) return alert('Enter entity Common Name');
+
+    const btn = document.getElementById('btn-pki-issue');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Issuing Certificate…';
+
+    const d = await api('/api/pki/issue-cert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ca_name, entity_cn, org}) });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-pen-tool"/></svg></span> Issue Certificate`;
+
+    const el = document.getElementById('pki-issue-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result" style="margin-top:1rem"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    el.innerHTML = `
+    <div class="result" style="margin-top:1rem">
+        <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Subject</span><span class="result-val">${esc(d.subject)}</span></div>
+            <div class="result-row"><span class="result-key">Issuer</span><span class="result-val accent">${esc(d.issuer)}</span></div>
+            <div class="result-row"><span class="result-key">Valid For</span><span class="result-val">${d.valid_days} days</span></div>
+            <div class="result-row"><span class="result-key">Key Usage</span><span class="result-val">${esc(d.key_usage)}</span></div>
+            <div class="result-row"><span class="result-key">Signature Algo</span><span class="result-val">${d.signature_algo}</span></div>
+            <div class="mono-block" style="margin-top:10px"><span class="mono-label">PEM Certificate</span>${esc(d.cert_pem.substring(0, 300))}…</div>
+        </div>
+    </div>`;
+    refreshData();
+}
+
+async function pkiVerify() {
+    const entity_cn = document.getElementById('pki-verify-cn').value;
+    if (!entity_cn) return alert('Select an entity to verify');
+
+    const btn = document.getElementById('btn-pki-verify');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying…';
+
+    const d = await api('/api/pki/verify-cert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({entity_cn}) });
+
+    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-shield"/></svg></span> Verify Certificate Chain`;
+
+    const el = document.getElementById('pki-verify-result');
+    if (d.error) {
+        el.innerHTML = `<div class="result" style="margin-top:1rem"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+        return;
+    }
+
+    const chainHTML = d.chain.map((cn, i) =>
+        `<div class="chain-node ${i===0?'chain-entity':'chain-ca'}">${i === 0 ? '🌐' : '🏛️'} ${esc(cn)}</div>${i < d.chain.length-1 ? '<div class="chain-arrow">↑ signed by</div>' : ''}`
+    ).join('');
+
+    el.innerHTML = `
+    <div class="result" style="margin-top:1rem">
+        <div class="result-bar ${d.is_valid?'ok':'err'}"><span class="icon">${d.is_valid?IC.check:IC.x}</span> ${esc(d.status)}</div>
+        <div class="result-body">
+            <div class="result-row"><span class="result-key">Entity</span><span class="result-val accent">${esc(d.entity_cn)}</span></div>
+            <div class="result-row"><span class="result-key">Issuer CA</span><span class="result-val">${esc(d.issued_by)}</span></div>
+            <div class="result-row"><span class="result-key">Signature Valid</span><span class="result-val ${d.is_valid?'ok':'err'}">${d.is_valid ? 'Yes ✅' : 'No ❌'}</span></div>
+            <div style="margin-top:1rem">
+                <div class="field-label">Chain of Trust</div>
+                <div class="trust-chain">${chainHTML}</div>
+            </div>
+        </div>
+    </div>`;
 }
 
 // ── Init
