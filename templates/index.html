@@ -2243,11 +2243,11 @@ async function encryptFile() {
     addLog('enc-log', `Encrypting "${selectedFile.name}" (${fmt(selectedFile.size)})`, 'info');
     addLog('enc-log', `Sender: ${sender}  |  Receiver: ${receiver}`, 'info');
     updateHybridFlowStep('file');
-    await sleep(250); addLog('enc-log', 'Computing SHA-256 hash…'); updateHybridFlowStep('hash');
-    await sleep(200); addLog('enc-log', 'Signing hash with sender RSA private key…'); updateHybridFlowStep('sig');
-    await sleep(200); addLog('enc-log', 'Generating 256-bit AES session key…'); updateHybridFlowStep('aes');
-    await sleep(200); addLog('enc-log', 'Encrypting file with AES-256-CBC…');
-    await sleep(200); addLog('enc-log', 'Wrapping AES key with receiver RSA public key (OAEP)…'); updateHybridFlowStep('wrap');
+    await sleep(40); addLog('enc-log', 'Computing SHA-256 hash…'); updateHybridFlowStep('hash');
+    await sleep(40); addLog('enc-log', 'Signing hash with sender RSA private key…'); updateHybridFlowStep('sig');
+    await sleep(40); addLog('enc-log', 'Generating 256-bit AES session key…'); updateHybridFlowStep('aes');
+    await sleep(40); addLog('enc-log', 'Encrypting file with AES-256-CBC…');
+    await sleep(40); addLog('enc-log', 'Wrapping AES key with receiver RSA public key (OAEP)…'); updateHybridFlowStep('wrap');
 
     const fd = new FormData();
     fd.append('file', selectedFile); fd.append('sender', sender); fd.append('receiver', receiver);
@@ -2296,19 +2296,19 @@ async function decryptBundle() {
     
     // Animate Gate 1: RSA-OAEP
     const gKey = document.getElementById('gate-key'); if (gKey) gKey.classList.add('active');
-    await sleep(250); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
+    await sleep(40); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
     
     // Animate Gate 2: AES-CBC
     const gAes = document.getElementById('gate-aes'); if (gAes) gAes.classList.add('active');
-    await sleep(250); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
+    await sleep(40); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
     
     // Animate Gate 3: SHA-256
     const gHash = document.getElementById('gate-hash'); if (gHash) gHash.classList.add('active');
-    await sleep(250); addLog('dec-log', 'Recomputing SHA-256 hash…');
+    await sleep(40); addLog('dec-log', 'Recomputing SHA-256 hash…');
     
     // Animate Gate 4: Signature
     const gSig = document.getElementById('gate-sig'); if (gSig) gSig.classList.add('active');
-    await sleep(250); addLog('dec-log', 'Verifying digital signature…');
+    await sleep(40); addLog('dec-log', 'Verifying digital signature…');
 
     const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
     btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify &amp; Authenticate`;

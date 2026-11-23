@@ -66,6 +66,43 @@ bundle_store: dict[str, dict]          = {}
 cert_store:   dict[str, dict]          = {}   # { cn -> { cert_pem, key_pem, issued_by } }
 ca_store:     dict[str, dict]          = {}   # { cn -> { cert_pem, key_pem } } — CA certs
 
+BUNDLES_FILE = os.path.join(UPLOAD_DIR, "bundles.json")
+
+def _load_persisted_data():
+    """Auto-load pre-existing RSA keys and saved bundles on server startup."""
+    if os.path.exists(KEYS_DIR):
+        for fname in os.listdir(KEYS_DIR):
+            if fname.endswith("_private.pem"):
+                username = fname[:-12]
+                pub_path = os.path.join(KEYS_DIR, f"{username}_public.pem")
+                priv_path = os.path.join(KEYS_DIR, fname)
+                if os.path.exists(pub_path):
+                    try:
+                        with open(priv_path, "r", encoding="utf-8") as f:
+                            priv = f.read()
+                        with open(pub_path, "r", encoding="utf-8") as f:
+                            pub = f.read()
+                        key_store[username] = {"private": priv, "public": pub}
+                    except Exception:
+                        pass
+    if os.path.exists(BUNDLES_FILE):
+        try:
+            with open(BUNDLES_FILE, "r", encoding="utf-8") as f:
+                saved = json.load(f)
+                bundle_store.update(saved)
+        except Exception:
+            pass
+
+_load_persisted_data()
+
+def _save_bundle(bundle_id: str, bundle_data: dict):
+    bundle_store[bundle_id] = bundle_data
+    try:
+        with open(BUNDLES_FILE, "w", encoding="utf-8") as f:
+            json.dump(bundle_store, f)
+    except Exception:
+        pass
+
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -155,6 +192,8 @@ def encrypt_file():
 
     if not file or not sender or not receiver:
         return jsonify({"error": "file, sender, and receiver are all required"}), 400
+    if sender == receiver:
+        return jsonify({"error": "Sender and receiver must be different users"}), 400
     if sender not in key_store:
         return jsonify({"error": f"No keys found for sender '{sender}'. Generate keys first."}), 400
     if receiver not in key_store:
@@ -195,7 +234,7 @@ def encrypt_file():
         "encrypted_size":    len(ciphertext),
         "timestamp":         datetime.utcnow().isoformat() + "Z",
     }
-    bundle_store[bundle_id] = bundle
+    _save_bundle(bundle_id, bundle)
 
     return jsonify({
         "message":          "File encrypted and signed successfully",
@@ -311,6 +350,8 @@ def tamper_bundle():
     else:
         return jsonify({"error": "tamper_type must be 'ciphertext', 'signature', or 'hash'"}), 400
 
+    _save_bundle(bundle_id, bundle)
+
     return jsonify({
         "message":     f"⚠️ Bundle '{bundle_id}' has been tampered with!",
         "tamper_type":  tamper_type,
@@ -384,8 +425,13 @@ def image_encrypt():
     except Exception:
         return jsonify({"error": "Invalid image file"}), 400
 
-    original_b64 = _img_to_b64(img)
     width, height = img.size
+    # Optimize preview dimensions for fast AES & instant web response if image is large
+    if width > 800 or height > 800:
+        img.thumbnail((800, 800), Image.Resampling.LANCZOS)
+        width, height = img.size
+
+    original_b64 = _img_to_b64(img)
 
     raw_pixels = img.tobytes()
     aes_key    = get_random_bytes(32)
@@ -457,9 +503,12 @@ def image_decrypt():
     else:
         cipher = AES.new(aes_key, AES.MODE_CBC, iv)
 
-    plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
-    img       = Image.frombytes("RGB", (width, height), plaintext)
-    decrypted_b64 = _img_to_b64(img)
+    try:
+        plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
+        img       = Image.frombytes("RGB", (width, height), plaintext)
+        decrypted_b64 = _img_to_b64(img)
+    except Exception as e:
+        return jsonify({"error": f"Image decryption failed: {str(e)}"}), 400
 
     return jsonify({
         "decrypted_image": decrypted_b64,
@@ -490,38 +539,21 @@ def steg_hide():
     except Exception:
         return jsonify({"error": "Invalid image file"}), 400
 
-    # Encode message length + message as bytes with a sentinel
+    # Encode message length + message as bytes
     msg_bytes  = message.encode("utf-8")
-    # 4 bytes for length, then message
     header     = struct.pack(">I", len(msg_bytes))
     payload    = header + msg_bytes
 
-    pixels     = list(img.getdata())
-    max_bits   = len(pixels) * 3   # 1 bit per channel
-    max_bytes  = max_bits // 8
+    arr = np.array(img, dtype=np.uint8)
+    flat = arr.reshape(-1)
+    max_bytes = len(flat) // 8
 
     if len(payload) > max_bytes:
         return jsonify({"error": f"Message too long for this image. Max {max_bytes - 4} bytes."}), 400
 
-    # Embed bits
-    bits = []
-    for byte in payload:
-        for i in range(7, -1, -1):
-            bits.append((byte >> i) & 1)
-
-    new_pixels = []
-    bit_idx    = 0
-    for r, g, b in pixels:
-        if bit_idx < len(bits):
-            r = (r & ~1) | bits[bit_idx];  bit_idx += 1
-        if bit_idx < len(bits):
-            g = (g & ~1) | bits[bit_idx];  bit_idx += 1
-        if bit_idx < len(bits):
-            b = (b & ~1) | bits[bit_idx];  bit_idx += 1
-        new_pixels.append((r, g, b))
-
-    steg_img = Image.new("RGB", img.size)
-    steg_img.putdata(new_pixels)
+    payload_bits = np.unpackbits(np.frombuffer(payload, dtype=np.uint8))
+    flat[:len(payload_bits)] = (flat[:len(payload_bits)] & 0xFE) | payload_bits
+    steg_img = Image.fromarray(flat.reshape(arr.shape))
 
     original_b64 = _img_to_b64(img)
     steg_b64     = _img_to_b64(steg_img)
@@ -530,7 +562,7 @@ def steg_hide():
         "original_image":    original_b64,
         "steg_image":        steg_b64,
         "message_length":    len(msg_bytes),
-        "bits_used":         len(bits),
+        "bits_used":         len(payload_bits),
         "capacity_bytes":    max_bytes - 4,
         "method":            "LSB (Least Significant Bit) Steganography",
         "note":              "The two images look visually identical — the secret is invisible to the naked eye.",
@@ -539,7 +571,7 @@ def steg_hide():
 
 @app.route("/api/steg-reveal", methods=["POST"])
 def steg_reveal():
-    """Extract hidden message from an LSB-steganography image."""
+    """Extract hidden message from an LSB-steganography image (vectorized)."""
     file = request.files.get("image")
     if not file:
         return jsonify({"error": "No image file provided"}), 400
@@ -549,30 +581,24 @@ def steg_reveal():
     except Exception:
         return jsonify({"error": "Invalid image file"}), 400
 
-    pixels = list(img.getdata())
-    raw_bits = []
-    for r, g, b in pixels:
-        raw_bits += [(r & 1), (g & 1), (b & 1)]
-
-    def bits_to_bytes(bits_list):
-        result = []
-        for i in range(0, len(bits_list) - 7, 8):
-            byte = 0
-            for j in range(8):
-                byte = (byte << 1) | bits_list[i + j]
-            result.append(byte)
-        return bytes(result)
-
-    raw = bits_to_bytes(raw_bits)
-    if len(raw) < 4:
+    arr = np.array(img, dtype=np.uint8).reshape(-1)
+    if len(arr) < 32:
         return jsonify({"error": "Image does not contain a hidden message (too small)"}), 400
 
-    msg_len = struct.unpack(">I", raw[:4])[0]
-    if msg_len == 0 or msg_len > len(raw) - 4:
+    # Read first 32 bits for message length header
+    len_bits = arr[:32] & 1
+    len_bytes = np.packbits(len_bits).tobytes()
+    msg_len = struct.unpack(">I", len_bytes)[0]
+
+    if msg_len == 0 or msg_len > (len(arr) - 32) // 8:
         return jsonify({"error": "No valid hidden message found in this image"}), 400
 
+    total_bits = 32 + msg_len * 8
+    needed_bits = arr[:total_bits] & 1
+    msg_bytes = np.packbits(needed_bits).tobytes()[4:4 + msg_len]
+
     try:
-        message = raw[4:4 + msg_len].decode("utf-8")
+        message = msg_bytes.decode("utf-8")
     except UnicodeDecodeError:
         return jsonify({"error": "Hidden data found but could not decode as UTF-8 text"}), 400
 
