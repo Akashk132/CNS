@@ -1,3 +1,4 @@
+from pki_service import pki_engine
 """
 CryptoShield — Adaptive Hybrid Cryptography for Secure File Transmission
 =========================================================================
@@ -23,6 +24,7 @@ import base64
 import hashlib
 import uuid
 import struct
+import math
 import datetime as dt
 from datetime import datetime, timezone, timedelta
 
@@ -40,8 +42,11 @@ import qrcode
 from PIL import Image
 import numpy as np
 
-# OpenSSL for PKI
-from OpenSSL import crypto as ssl_crypto
+# Cryptography for X.509 PKI
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes as crypt_hashes, serialization as crypt_serial
+from cryptography.hazmat.primitives.asymmetric import rsa as crypt_rsa, padding as crypt_padding
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -350,17 +355,25 @@ def list_users():
 
 
 # ===========================================================================
-# NEW FEATURE 1 — Image Encryption with Visual Preview
+# NEW FEATURE 1 — Image Encryption with Visual Preview & ECB vs CBC Analysis
 # ===========================================================================
+def _calc_entropy(data: bytes) -> float:
+    """Calculate Shannon Entropy of raw byte sequence (0 to 8 bits/byte)."""
+    if not data:
+        return 0.0
+    arr = np.frombuffer(data, dtype=np.uint8)
+    counts = np.bincount(arr, minlength=256)
+    nonzero = counts[counts > 0]
+    total = len(arr)
+    probs = nonzero / total
+    return float(-np.sum(probs * np.log2(probs)))
+
+
 @app.route("/api/image-encrypt", methods=["POST"])
 def image_encrypt():
     """
-    Encrypts an image using AES-256-CBC.
-    Returns:
-      - original image as base64 PNG
-      - 'encrypted noise' image (pixel-level scramble) as base64 PNG
-      - encrypted bytes as base64 (for decryption)
-      - AES key + IV as base64
+    Encrypts an image using both AES-256-CBC and AES-256-ECB.
+    Computes Shannon entropy for leak analysis.
     """
     file = request.files.get("image")
     if not file:
@@ -374,31 +387,52 @@ def image_encrypt():
     original_b64 = _img_to_b64(img)
     width, height = img.size
 
-    # Encrypt raw pixel bytes with AES-256-CBC
-    raw_pixels = img.tobytes()       # exactly width*height*3 bytes
+    raw_pixels = img.tobytes()
     aes_key    = get_random_bytes(32)
     iv         = get_random_bytes(16)
-    cipher     = AES.new(aes_key, AES.MODE_CBC, iv)
-    padded     = pad(raw_pixels, AES.block_size)
-    ciphertext = cipher.encrypt(padded)
 
-    # Build "noise" image from ciphertext bytes (visualize encrypted pixels)
-    noise_bytes = ciphertext[:width * height * 3]          # trim to same dimensions
-    noise_arr   = np.frombuffer(noise_bytes, dtype=np.uint8).reshape((height, width, 3))
-    noise_img   = Image.fromarray(noise_arr, "RGB")
-    noise_b64   = _img_to_b64(noise_img)
+    # CBC Encryption
+    cipher_cbc = AES.new(aes_key, AES.MODE_CBC, iv)
+    padded     = pad(raw_pixels, AES.block_size)
+    ct_cbc     = cipher_cbc.encrypt(padded)
+
+    # ECB Encryption (demonstrates electronic codebook pixel correlation)
+    cipher_ecb = AES.new(aes_key, AES.MODE_ECB)
+    ct_ecb     = cipher_ecb.encrypt(padded)
+
+    # CBC Noise Image
+    noise_cbc_bytes = ct_cbc[:width * height * 3]
+    noise_cbc_arr   = np.frombuffer(noise_cbc_bytes, dtype=np.uint8).reshape((height, width, 3))
+    noise_cbc_img   = Image.fromarray(noise_cbc_arr, "RGB")
+    noise_cbc_b64   = _img_to_b64(noise_cbc_img)
+
+    # ECB Noise Image
+    noise_ecb_bytes = ct_ecb[:width * height * 3]
+    noise_ecb_arr   = np.frombuffer(noise_ecb_bytes, dtype=np.uint8).reshape((height, width, 3))
+    noise_ecb_img   = Image.fromarray(noise_ecb_arr, "RGB")
+    noise_ecb_b64   = _img_to_b64(noise_ecb_img)
+
+    entropy_orig = round(_calc_entropy(raw_pixels), 4)
+    entropy_cbc  = round(_calc_entropy(ct_cbc), 4)
+    entropy_ecb  = round(_calc_entropy(ct_ecb), 4)
 
     return jsonify({
-        "original_image":   original_b64,
-        "encrypted_image":  noise_b64,
-        "width":            width,
-        "height":           height,
-        "aes_key":          _b64e(aes_key),
-        "iv":               _b64e(iv),
-        "ciphertext":       _b64e(ciphertext),
-        "original_size":    len(raw_pixels),
-        "encrypted_size":   len(ciphertext),
-        "algorithm":        "AES-256-CBC pixel encryption",
+        "original_image":       original_b64,
+        "encrypted_image":      noise_cbc_b64,
+        "encrypted_image_cbc":  noise_cbc_b64,
+        "encrypted_image_ecb":  noise_ecb_b64,
+        "entropy_original":     entropy_orig,
+        "entropy_cbc":          entropy_cbc,
+        "entropy_ecb":          entropy_ecb,
+        "width":                width,
+        "height":               height,
+        "aes_key":              _b64e(aes_key),
+        "iv":                   _b64e(iv),
+        "ciphertext":           _b64e(ct_cbc),
+        "ciphertext_ecb":       _b64e(ct_ecb),
+        "original_size":        len(raw_pixels),
+        "encrypted_size":       len(ct_cbc),
+        "algorithm":            "AES-256-CBC pixel encryption",
     })
 
 
@@ -406,19 +440,23 @@ def image_encrypt():
 def image_decrypt():
     """
     Decrypts an encrypted image using the provided AES key + IV.
-    Returns the restored image as base64 PNG.
     """
     data = request.get_json(force=True)
     try:
         aes_key    = _b64d(data["aes_key"])
-        iv         = _b64d(data["iv"])
+        iv         = _b64d(data.get("iv", "")) if data.get("iv") else b""
         ciphertext = _b64d(data["ciphertext"])
         width      = int(data["width"])
         height     = int(data["height"])
+        mode       = data.get("mode", "CBC").upper()
     except (KeyError, Exception) as e:
         return jsonify({"error": f"Missing or invalid parameters: {e}"}), 400
 
-    cipher    = AES.new(aes_key, AES.MODE_CBC, iv)
+    if mode == "ECB":
+        cipher = AES.new(aes_key, AES.MODE_ECB)
+    else:
+        cipher = AES.new(aes_key, AES.MODE_CBC, iv)
+
     plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
     img       = Image.frombytes("RGB", (width, height), plaintext)
     decrypted_b64 = _img_to_b64(img)
@@ -426,6 +464,7 @@ def image_decrypt():
     return jsonify({
         "decrypted_image": decrypted_b64,
         "message":         "Image decrypted successfully",
+        "mode_used":       mode,
     })
 
 
@@ -719,182 +758,338 @@ def qr_decrypt():
 # ===========================================================================
 # NEW FEATURE 5 — Digital PKI Simulator (CA + Certificate Issuance)
 # ===========================================================================
+# ---------------------------------------------------------------------------
+# PKI Simulator Routes
+# ---------------------------------------------------------------------------
 @app.route("/api/pki/create-ca", methods=["POST"])
 def pki_create_ca():
-    """
-    Create a self-signed Root Certificate Authority (CA).
-    """
-    data = request.get_json(force=True)
-    cn   = data.get("cn", "").strip()        # Common Name, e.g. "MyRootCA"
-    org  = data.get("org", "CryptoShield").strip()
-    country = data.get("country", "IN").strip().upper()[:2]
-
-    if not cn:
+    req = request.get_json(force=True) or {}
+    name = req.get("cn", "").strip()
+    org = req.get("org", "CryptoShield").strip()
+    country = req.get("country", "IN").strip()
+    if not name:
         return jsonify({"error": "Common Name (cn) is required"}), 400
-
-    # Generate RSA-2048 key
-    pkey = ssl_crypto.PKey()
-    pkey.generate_key(ssl_crypto.TYPE_RSA, 2048)
-
-    cert = ssl_crypto.X509()
-    cert.get_subject().CN  = cn
-    cert.get_subject().O   = org
-    cert.get_subject().C   = country
-    cert.set_serial_number(int(uuid.uuid4()))
-    cert.gmtime_adj_notBefore(0)
-    cert.gmtime_adj_notAfter(10 * 365 * 24 * 60 * 60)   # 10 years
-    cert.set_issuer(cert.get_subject())                  # self-signed
-    cert.set_pubkey(pkey)
-
-    cert.add_extensions([
-        ssl_crypto.X509Extension(b"basicConstraints", True, b"CA:TRUE"),
-        ssl_crypto.X509Extension(b"keyUsage",         True, b"keyCertSign, cRLSign"),
-        ssl_crypto.X509Extension(b"subjectKeyIdentifier", False, b"hash", subject=cert),
-    ])
-    cert.sign(pkey, "sha256")
-
-    cert_pem = ssl_crypto.dump_certificate(ssl_crypto.FILETYPE_PEM, cert).decode()
-    key_pem  = ssl_crypto.dump_privatekey(ssl_crypto.FILETYPE_PEM, pkey).decode()
-
-    ca_store[cn] = {"cert_pem": cert_pem, "key_pem": key_pem}
-
-    return jsonify({
-        "message":         f"Root CA '{cn}' created successfully",
-        "ca_name":          cn,
-        "cert_pem":         cert_pem,
-        "valid_years":      10,
-        "is_ca":            True,
-        "subject":          f"CN={cn}, O={org}, C={country}",
-        "issuer":           f"CN={cn} (Self-Signed)",
-        "signature_algo":   "SHA256withRSA",
-    })
+    try:
+        cert_pem = pki_engine.build_root_ca(name, org, country)
+        return jsonify({
+            "message": f"Root CA '{name}' created successfully",
+            "ca_name": name,
+            "cert_pem": cert_pem,
+            "valid_years": 10,
+            "is_ca": True,
+            "subject": f"CN={name}, O={org}, C={country}",
+            "issuer": f"CN={name} (Self-Signed)",
+            "signature_algo": "SHA256withRSA",
+        })
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
 
 @app.route("/api/pki/issue-cert", methods=["POST"])
 def pki_issue_cert():
-    """
-    Issue a certificate for an entity, signed by an existing CA.
-    """
-    data   = request.get_json(force=True)
-    ca_name  = data.get("ca_name", "").strip()
-    entity_cn = data.get("entity_cn", "").strip()
-    org       = data.get("org", "CryptoShield Inc").strip()
-    country   = data.get("country", "IN").strip().upper()[:2]
-
+    req = request.get_json(force=True) or {}
+    ca_name = req.get("ca_name", "").strip()
+    entity_cn = req.get("entity_cn", "").strip()
+    org = req.get("org", "CryptoShield Inc").strip()
+    country = req.get("country", "IN").strip()
     if not ca_name or not entity_cn:
         return jsonify({"error": "ca_name and entity_cn are required"}), 400
-    if ca_name not in ca_store:
+    try:
+        cert_pem = pki_engine.issue_leaf_cert(ca_name, entity_cn, org, country)
+        rec = pki_engine.cert_records[entity_cn]
+        return jsonify({
+            "message": f"Certificate issued for '{entity_cn}' by CA '{ca_name}'",
+            "entity_cn": entity_cn,
+            "issued_by": ca_name,
+            "cert_pem": cert_pem,
+            "subject": f"CN={entity_cn}, O={org}, C={country}",
+            "issuer": f"CN={ca_name}",
+            "not_before": rec["valid_from"],
+            "not_after": rec["valid_until"],
+            "valid_days": 365,
+            "signature_algo": "SHA256withRSA",
+            "key_usage": "digitalSignature, keyEncipherment",
+        })
+    except KeyError:
         return jsonify({"error": f"CA '{ca_name}' not found. Create a CA first."}), 404
-
-    ca_data  = ca_store[ca_name]
-    ca_cert  = ssl_crypto.load_certificate(ssl_crypto.FILETYPE_PEM, ca_data["cert_pem"])
-    ca_key   = ssl_crypto.load_privatekey(ssl_crypto.FILETYPE_PEM, ca_data["key_pem"])
-
-    # Generate key for the entity
-    entity_key = ssl_crypto.PKey()
-    entity_key.generate_key(ssl_crypto.TYPE_RSA, 2048)
-
-    cert = ssl_crypto.X509()
-    cert.get_subject().CN = entity_cn
-    cert.get_subject().O  = org
-    cert.get_subject().C  = country
-    cert.set_serial_number(int(uuid.uuid4()))
-    cert.gmtime_adj_notBefore(0)
-    cert.gmtime_adj_notAfter(365 * 24 * 60 * 60)   # 1 year
-    cert.set_issuer(ca_cert.get_subject())
-    cert.set_pubkey(entity_key)
-
-    cert.add_extensions([
-        ssl_crypto.X509Extension(b"basicConstraints", False, b"CA:FALSE"),
-        ssl_crypto.X509Extension(b"keyUsage",         False, b"digitalSignature, keyEncipherment"),
-        ssl_crypto.X509Extension(b"extendedKeyUsage", False, b"serverAuth, clientAuth"),
-    ])
-    cert.sign(ca_key, "sha256")
-
-    cert_pem = ssl_crypto.dump_certificate(ssl_crypto.FILETYPE_PEM, cert).decode()
-    key_pem  = ssl_crypto.dump_privatekey(ssl_crypto.FILETYPE_PEM, entity_key).decode()
-
-    cert_store[entity_cn] = {
-        "cert_pem":  cert_pem,
-        "key_pem":   key_pem,
-        "issued_by": ca_name,
-    }
-
-    # Build certificate details
-    x509 = cert
-    not_before = x509.get_notBefore().decode()
-    not_after  = x509.get_notAfter().decode()
-
-    return jsonify({
-        "message":       f"Certificate issued for '{entity_cn}' by CA '{ca_name}'",
-        "entity_cn":      entity_cn,
-        "issued_by":      ca_name,
-        "cert_pem":       cert_pem,
-        "subject":        f"CN={entity_cn}, O={org}, C={country}",
-        "issuer":         f"CN={ca_name}",
-        "not_before":     not_before,
-        "not_after":      not_after,
-        "valid_days":     365,
-        "signature_algo": "SHA256withRSA",
-        "key_usage":      "digitalSignature, keyEncipherment",
-    })
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
 
 @app.route("/api/pki/verify-cert", methods=["POST"])
 def pki_verify_cert():
-    """
-    Verify a certificate against the CA that signed it.
-    """
-    data       = request.get_json(force=True)
-    entity_cn  = data.get("entity_cn", "").strip()
-
+    req = request.get_json(force=True) or {}
+    entity_cn = req.get("entity_cn", "").strip()
     if not entity_cn:
         return jsonify({"error": "entity_cn is required"}), 400
-    if entity_cn not in cert_store:
+    if entity_cn not in pki_engine.cert_records:
         return jsonify({"error": f"Certificate for '{entity_cn}' not found"}), 404
-
-    entry    = cert_store[entity_cn]
-    ca_name  = entry["issued_by"]
-
-    if ca_name not in ca_store:
-        return jsonify({"error": f"Issuing CA '{ca_name}' not found"}), 404
-
-    ca_cert     = ssl_crypto.load_certificate(ssl_crypto.FILETYPE_PEM, ca_store[ca_name]["cert_pem"])
-    entity_cert = ssl_crypto.load_certificate(ssl_crypto.FILETYPE_PEM, entry["cert_pem"])
-
-    # Verify the signature
-    try:
-        store     = ssl_crypto.X509Store()
-        store.add_cert(ca_cert)
-        ctx = ssl_crypto.X509StoreContext(store, entity_cert)
-        ctx.verify_certificate()
-        is_valid = True
-        status   = "VALID ✅"
-    except ssl_crypto.X509StoreContextError as e:
-        is_valid = False
-        status   = f"INVALID ❌ — {e}"
-
+    is_valid, msg = pki_engine.validate_leaf(entity_cn)
+    rec = pki_engine.cert_records[entity_cn]
     return jsonify({
-        "entity_cn":   entity_cn,
-        "issued_by":   ca_name,
-        "is_valid":    is_valid,
-        "status":      status,
-        "chain":       [entity_cn, ca_name],
-        "cert_pem":    entry["cert_pem"],
+        "entity_cn": entity_cn,
+        "issued_by": rec["issued_by"],
+        "is_valid": is_valid,
+        "status": "VALID ✅" if is_valid else f"INVALID ❌ — {msg}",
+        "chain": [entity_cn, rec["issued_by"]],
+        "cert_pem": rec["cert_pem"],
     })
 
 
 @app.route("/api/pki/list", methods=["GET"])
 def pki_list():
     return jsonify({
-        "cas":   list(ca_store.keys()),
-        "certs": [{"cn": cn, "issued_by": v["issued_by"]} for cn, v in cert_store.items()],
+        "cas": list(pki_engine.ca_records.keys()),
+        "certs": [{"cn": k, "issued_by": v["issued_by"]} for k, v in pki_engine.cert_records.items()],
     })
 
 
 # ---------------------------------------------------------------------------
-# Run
+# Educational Deep Dive API Endpoints
 # ---------------------------------------------------------------------------
+def _compute_rijndael_sbox():
+    p = 1
+    exp_t = [0] * 256
+    log_t = [0] * 256
+    for i in range(256):
+        exp_t[i] = p
+        log_t[p] = i
+        p ^= ((p << 1) ^ 0x11B) if (p & 0x80) else (p << 1)
+    
+    sb = [0] * 256
+    sb[0] = 0x63
+    for i in range(1, 256):
+        inv = exp_t[255 - log_t[i]]
+        s = inv ^ ((inv << 1) | (inv >> 7)) ^ ((inv << 2) | (inv >> 6)) ^ ((inv << 3) | (inv >> 5)) ^ ((inv << 4) | (inv >> 4)) ^ 0x63
+        sb[i] = s & 0xFF
+    return sb
+
+_RIJNDAEL_SBOX = _compute_rijndael_sbox()
+
+def _gf_xtime(b):
+    shifted = (b << 1) & 0xFF
+    return (shifted ^ 0x1B) if (b & 0x80) else shifted
+
+def _gf_mul(a, b):
+    if b == 1:
+        return a
+    elif b == 2:
+        return _gf_xtime(a)
+    elif b == 3:
+        return _gf_xtime(a) ^ a
+    return 0
+
+@app.route("/api/edu/aes-trace", methods=["POST"])
+def edu_aes_trace():
+    req = request.get_json(force=True) or {}
+    msg = req.get("text", "SECURITY_LAB2026").encode("utf-8")[:16].ljust(16, b"\x00")
+    key = req.get("key", "AES256_SECRET_KEY_EXPLAINED_OK!").encode("utf-8")[:32].ljust(32, b"\x00")
+    
+    # 1. State & Key Matrices (4x4 column-major order)
+    state_matrix = [[hex(msg[r + 4*c])[2:].zfill(2).upper() for c in range(4)] for r in range(4)]
+    key_matrix = [[hex(key[r + 4*c])[2:].zfill(2).upper() for c in range(4)] for r in range(4)]
+    
+    # Step 1: SubBytes using standard Rijndael S-Box + per-byte lookup details
+    sbox_matrix = [["00"] * 4 for _ in range(4)]
+    sub_bytes_details = {}
+    for r in range(4):
+        for c in range(4):
+            in_b = int(state_matrix[r][c], 16)
+            out_b = _RIJNDAEL_SBOX[in_b]
+            out_hex = hex(out_b)[2:].zfill(2).upper()
+            sbox_matrix[r][c] = out_hex
+            row_idx = (in_b >> 4) & 0x0F
+            col_idx = in_b & 0x0F
+            sub_bytes_details[f"{r}_{c}"] = {
+                "row": r, "col": c,
+                "input_hex": state_matrix[r][c],
+                "output_hex": out_hex,
+                "sbox_row": row_idx,
+                "sbox_col": col_idx,
+                "ascii": chr(in_b) if 32 <= in_b <= 126 else "."
+            }
+
+    # Step 2: ShiftRows: Row r cyclically shifts left by r positions
+    shift_matrix = [
+        sbox_matrix[0][:],
+        sbox_matrix[1][1:] + sbox_matrix[1][:1],
+        sbox_matrix[2][2:] + sbox_matrix[2][:2],
+        sbox_matrix[3][3:] + sbox_matrix[3][:3],
+    ]
+    shift_rows_details = [
+        {"row": 0, "shift": 0, "before": sbox_matrix[0][:], "after": shift_matrix[0][:]},
+        {"row": 1, "shift": 1, "before": sbox_matrix[1][:], "after": shift_matrix[1][:]},
+        {"row": 2, "shift": 2, "before": sbox_matrix[2][:], "after": shift_matrix[2][:]},
+        {"row": 3, "shift": 3, "before": sbox_matrix[3][:], "after": shift_matrix[3][:]},
+    ]
+
+    # Step 3: MixColumns using Galois Field GF(2^8) Matrix Multiplication
+    # Fixed MDS Circulant Matrix
+    MDS = [
+        [0x02, 0x03, 0x01, 0x01],
+        [0x01, 0x02, 0x03, 0x01],
+        [0x01, 0x01, 0x02, 0x03],
+        [0x03, 0x01, 0x01, 0x02]
+    ]
+    mix_matrix = [["00"] * 4 for _ in range(4)]
+    mix_columns_details = []
+
+    for c in range(4):
+        col_in_ints = [int(shift_matrix[r][c], 16) for r in range(4)]
+        col_in_hex = [shift_matrix[r][c] for r in range(4)]
+        col_rows_data = []
+
+        for r in range(4):
+            coeffs = MDS[r]
+            terms = []
+            xor_sum = 0
+            for k in range(4):
+                coeff = coeffs[k]
+                b_in = col_in_ints[k]
+                term_val = _gf_mul(b_in, coeff)
+                xor_sum ^= term_val
+                terms.append({
+                    "coeff": f"0{coeff}",
+                    "byte_in": hex(b_in)[2:].zfill(2).upper(),
+                    "term_hex": hex(term_val)[2:].zfill(2).upper(),
+                    "overflow_1b": bool((b_in & 0x80) and coeff in (2, 3))
+                })
+            res_hex = hex(xor_sum)[2:].zfill(2).upper()
+            mix_matrix[r][c] = res_hex
+            col_rows_data.append({
+                "row": r,
+                "coeffs": [f"0{x}" for x in coeffs],
+                "terms": terms,
+                "equation": f"({terms[0]['coeff']} • {terms[0]['byte_in']}) ⊕ ({terms[1]['coeff']} • {terms[1]['byte_in']}) ⊕ ({terms[2]['coeff']} • {terms[2]['byte_in']}) ⊕ ({terms[3]['coeff']} • {terms[3]['byte_in']}) = {terms[0]['term_hex']} ⊕ {terms[1]['term_hex']} ⊕ {terms[2]['term_hex']} ⊕ {terms[3]['term_hex']} = {res_hex}",
+                "result_hex": res_hex
+            })
+
+        mix_columns_details.append({
+            "col": c,
+            "col_input": col_in_hex,
+            "col_output": [mix_matrix[r][c] for r in range(4)],
+            "rows": col_rows_data
+        })
+
+    # Step 4: AddRoundKey (Bitwise XOR with round key)
+    add_matrix = [["00"] * 4 for _ in range(4)]
+    add_round_key_details = {}
+    for r in range(4):
+        for c in range(4):
+            s_val = int(mix_matrix[r][c], 16)
+            k_val = int(key_matrix[r][c], 16)
+            res_val = s_val ^ k_val
+            res_hex = hex(res_val)[2:].zfill(2).upper()
+            add_matrix[r][c] = res_hex
+            add_round_key_details[f"{r}_{c}"] = {
+                "row": r, "col": c,
+                "state_hex": mix_matrix[r][c],
+                "state_bin": bin(s_val)[2:].zfill(8),
+                "key_hex": key_matrix[r][c],
+                "key_bin": bin(k_val)[2:].zfill(8),
+                "result_hex": res_hex,
+                "result_bin": bin(res_val)[2:].zfill(8)
+            }
+
+    return jsonify({
+        "input_bytes": [hex(b)[2:].zfill(2).upper() for b in msg],
+        "state_matrix": state_matrix,
+        "key_matrix": key_matrix,
+        "sub_bytes_matrix": sbox_matrix,
+        "shift_rows_matrix": shift_matrix,
+        "mix_columns_matrix": mix_matrix,
+        "add_round_key_matrix": add_matrix,
+        "sub_bytes_details": sub_bytes_details,
+        "shift_rows_details": shift_rows_details,
+        "mix_columns_details": mix_columns_details,
+        "add_round_key_details": add_round_key_details,
+        "rounds_total": 14,
+        "key_bits": 256
+    })
+
+@app.route("/api/edu/rsa-trace", methods=["POST"])
+def edu_rsa_trace():
+    req = request.get_json(force=True) or {}
+    p = int(req.get("p", 67))
+    q = int(req.get("q", 71))
+    e = int(req.get("e", 17))
+    m = int(req.get("m", 42))
+
+    n = p * q
+    phi = (p - 1) * (q - 1)
+
+    # Extended GCD
+    def egcd(a, b):
+        if a == 0:
+            return b, 0, 1
+        g, y, x = egcd(b % a, a)
+        return g, x - (b // a) * y, y
+
+    gcd_val, x, _ = egcd(e, phi)
+    d = (x % phi + phi) % phi
+
+    c = pow(m, e, n)
+    decrypted = pow(c, d, n)
+
+    # Exponentiation trace
+    binary_e = bin(e)[2:]
+    exp_steps = []
+    accum = 1
+    for idx, bit in enumerate(binary_e):
+        before = accum
+        accum = (accum * accum) % n
+        act = f"Square: ({before}^2) mod {n} = {accum}"
+        if bit == '1':
+            before_m = accum
+            accum = (accum * m) % n
+            act += f" | Multiply: ({before_m} * {m}) mod {n} = {accum}"
+        exp_steps.append({"step": idx + 1, "bit": bit, "operation": act, "current_value": accum})
+
+    return jsonify({
+        "p": p, "q": q, "n": n, "phi": phi, "e": e, "d": d,
+        "gcd_valid": (gcd_val == 1),
+        "message": m,
+        "ciphertext": c,
+        "decrypted": decrypted,
+        "verified": (decrypted == m),
+        "exp_steps": exp_steps
+    })
+
+
+@app.route("/api/edu/avalanche", methods=["POST"])
+def edu_avalanche():
+    req = request.get_json(force=True) or {}
+    text1 = req.get("text", "CyberSecurity2026")
+    if not text1:
+        text1 = "CyberSecurity2026"
+    
+    # Flip exactly 1 bit in the first character
+    b1 = bytearray(text1.encode("utf-8"))
+    b2 = bytearray(b1)
+    b2[0] ^= 0x01
+    text2 = bytes(b2).decode("latin-1")
+
+    # Hash comparison
+    h1 = hashlib.sha256(b1).hexdigest()
+    h2 = hashlib.sha256(b2).hexdigest()
+
+    h1_bits = "".join(f"{int(c, 16):04b}" for c in h1)
+    h2_bits = "".join(f"{int(c, 16):04b}" for c in h2)
+    diff_count = sum(1 for a, b in zip(h1_bits, h2_bits) if a != b)
+    percentage = round((diff_count / 256.0) * 100, 2)
+
+    return jsonify({
+        "original_text": text1,
+        "modified_text": text2,
+        "sha256_1": h1,
+        "sha256_2": h2,
+        "bits_flipped": diff_count,
+        "total_bits": 256,
+        "avalanche_percentage": percentage,
+        "bit_diff_map": [1 if a != b else 0 for a, b in zip(h1_bits, h2_bits)]
+    })
+
+
 if __name__ == "__main__":
     print("\n[*] CryptoShield Server Starting...")
     print("    AES-256-CBC | RSA-2048-OAEP | SHA-256 | RSA Digital Signatures")

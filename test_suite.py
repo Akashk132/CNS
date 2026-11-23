@@ -114,6 +114,25 @@ assert r_verify.status_code == 200, f"Verify cert failed: {r_verify.get_json()}"
 assert r_verify.get_json()["is_valid"] is True
 print(f"PKI Simulator passed! Chain verified: {r_verify.get_json()['status'].encode('ascii', 'replace').decode()}")
 
+print("\n=== TEST 10: ALGORITHM ACADEMY EDUCATIONAL SUITE ===")
+r_aes_edu = client.post("/api/edu/aes-trace", json={"text": "HELLO_AES_2026"})
+assert r_aes_edu.status_code == 200, f"AES trace failed: {r_aes_edu.get_json()}"
+aes_trace = r_aes_edu.get_json()
+assert "state_matrix" in aes_trace and "sub_bytes_matrix" in aes_trace and "shift_rows_matrix" in aes_trace
+print("AES State Matrix & 4-step transformation trace verified!")
+
+r_rsa_edu = client.post("/api/edu/rsa-trace", json={"p": 67, "q": 71, "e": 17, "m": 42})
+assert r_rsa_edu.status_code == 200, f"RSA trace failed: {r_rsa_edu.get_json()}"
+rsa_trace = r_rsa_edu.get_json()
+assert r_rsa_edu.get_json()["verified"] is True
+print("RSA Math Stepper & Square-and-Multiply trace verified!")
+
+r_avl = client.post("/api/edu/avalanche", json={"text": "TestingSAC2026"})
+assert r_avl.status_code == 200, f"Avalanche failed: {r_avl.get_json()}"
+avl_data = r_avl.get_json()
+assert avl_data["bits_flipped"] > 50
+print(f"Avalanche Effect verified! {avl_data['bits_flipped']}/256 bits flipped ({avl_data['avalanche_percentage']}%)")
+
 print("\n==============================================")
-print("  ALL 9 COMPREHENSIVE TEST SUITES PASSED!     ")
+print("  ALL 10 COMPREHENSIVE TEST SUITES PASSED!    ")
 print("==============================================")

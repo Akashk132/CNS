@@ -39,6 +39,14 @@
 - **Chain of Trust**: Interactively generate a Root Certificate Authority (Root CA), issue Intermediate CAs, and sign End-Entity (SSL/TLS) digital certificates.
 - **Certificate Inspection & Verification**: Inspect Subject, Issuer, Validity Dates, Extensions, and verify cryptographic signature validity along the trust chain.
 
+### 7. 🎓 Interactive Algorithm Academy & Visualizer Suite
+- **AES-256 State Transformation Engine**: Interactive 4×4 byte state matrix with animated round steppers for SubBytes (S-box), ShiftRows (cyclic offsets), MixColumns (Galois Field matrix multiplication), and AddRoundKey.
+- **RSA Public-Key Math Stepper**: Live calculation of $n = p \times q$, $\phi(n) = (p-1)(q-1)$, Extended Euclidean Algorithm table for $d \equiv e^{-1} \pmod{\phi(n)}$, and Square-and-Multiply modular exponentiation trace.
+- **Strict Avalanche Criterion (SAC) Heatmap**: Interactive 256-bit visual grid charting diffusion when a single input bit is flipped in SHA-256 and AES.
+- **Visual ECB vs CBC Mode Leak Analysis**: Side-by-side pattern leakage demonstration with live Shannon Entropy gauges ($H(X) = -\sum P(x) \log_2 P(x)$).
+- **LSB Steganography Bit Inspector**: 8-bit channel decomposition visualizer showing how secret text is embedded into pixel bit-planes without human visual degradation.
+- **Classical Ciphers Interactive Lab**: Caesar shift wheel animation and 26×26 Vigenère Tabula Recta highlighter.
+
 ---
 
 ## 🏗️ Cryptographic Architecture
@@ -113,13 +121,14 @@ http://127.0.0.1:5000
 
 ```
 CNS/
-├── app.py              # Main Flask server, cryptographic routes & algorithms
-├── requirements.txt    # Python dependencies (pycryptodome, pillow, qrcode, pyOpenSSL)
+├── app.py              # Main Flask server, cryptographic routes & educational APIs
+├── pki_service.py      # X.509 RFC 5280 Root CA, Certificate Issuance & Chain Verification
+├── test_suite.py       # Automated 10-module end-to-end CNS test suite
+├── requirements.txt    # Python dependencies (pycryptodome, pillow, qrcode, cryptography)
 ├── static/
-│   ├── style.css       # Responsive dark-mode styling with glassmorphism
-│   └── ...             # Frontend assets
+│   └── style.css       # Clean, professional, matte slate/zinc dark theme & animations
 ├── templates/
-│   └── index.html      # Modular single-page app with tabs for all 6 CNS labs
+│   └── index.html      # Modular single-page app with tabs for all CNS labs & visualizers
 ├── keys/               # Generated RSA PEM keys
 └── uploads/            # Temporary secure upload directory
 ```
