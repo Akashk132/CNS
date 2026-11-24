@@ -68,6 +68,19 @@ ca_store:     dict[str, dict]          = {}   # { cn -> { cert_pem, key_pem } } 
 
 BUNDLES_FILE = os.path.join(UPLOAD_DIR, "bundles.json")
 
+def _clean_pem(pem: str) -> str:
+    """Strips any accidental whitespace or stray characters outside the PEM envelope."""
+    if not pem or not isinstance(pem, str):
+        return pem
+    pem = pem.strip()
+    idx = pem.find("-----BEGIN")
+    if idx != -1:
+        pem = pem[idx:]
+    end_idx = pem.rfind("-----")
+    if end_idx != -1:
+        pem = pem[:end_idx + 5]
+    return pem.strip()
+
 def _load_persisted_data():
     """Auto-load pre-existing RSA keys and saved bundles on server startup."""
     if os.path.exists(KEYS_DIR):
@@ -79,9 +92,9 @@ def _load_persisted_data():
                 if os.path.exists(pub_path):
                     try:
                         with open(priv_path, "r", encoding="utf-8") as f:
-                            priv = f.read()
+                            priv = _clean_pem(f.read())
                         with open(pub_path, "r", encoding="utf-8") as f:
-                            pub = f.read()
+                            pub = _clean_pem(f.read())
                         key_store[username] = {"private": priv, "public": pub}
                     except Exception:
                         pass
@@ -205,18 +218,21 @@ def encrypt_file():
 
     file_hash = hashlib.sha256(plaintext).hexdigest()
 
-    sender_private_key = RSA.import_key(key_store[sender]["private"])
-    h = SHA256.new(plaintext)
-    signature = pkcs1_15.new(sender_private_key).sign(h)
+    try:
+        sender_private_key = RSA.import_key(_clean_pem(key_store[sender]["private"]))
+        h = SHA256.new(plaintext)
+        signature = pkcs1_15.new(sender_private_key).sign(h)
 
-    aes_key   = get_random_bytes(32)
-    iv        = get_random_bytes(AES.block_size)
-    cipher_aes = AES.new(aes_key, AES.MODE_CBC, iv)
-    ciphertext = cipher_aes.encrypt(pad(plaintext, AES.block_size))
+        aes_key   = get_random_bytes(32)
+        iv        = get_random_bytes(AES.block_size)
+        cipher_aes = AES.new(aes_key, AES.MODE_CBC, iv)
+        ciphertext = cipher_aes.encrypt(pad(plaintext, AES.block_size))
 
-    receiver_public_key = RSA.import_key(key_store[receiver]["public"])
-    cipher_rsa         = PKCS1_OAEP.new(receiver_public_key)
-    encrypted_aes_key  = cipher_rsa.encrypt(aes_key)
+        receiver_public_key = RSA.import_key(_clean_pem(key_store[receiver]["public"]))
+        cipher_rsa         = PKCS1_OAEP.new(receiver_public_key)
+        encrypted_aes_key  = cipher_rsa.encrypt(aes_key)
+    except Exception as e:
+        return jsonify({"error": f"Cryptographic operation failed: {str(e)}"}), 400
 
     bundle_id = str(uuid.uuid4())[:8]
     bundle = {
@@ -264,7 +280,10 @@ def decrypt_file():
     bundle   = bundle_store[bundle_id]
     receiver = bundle["receiver"]
 
-    receiver_private_key = RSA.import_key(key_store[receiver]["private"])
+    try:
+        receiver_private_key = RSA.import_key(_clean_pem(key_store[receiver]["private"]))
+    except Exception as e:
+        return jsonify({"error": f"Invalid receiver private key format: {str(e)}"}), 400
     cipher_rsa = PKCS1_OAEP.new(receiver_private_key)
     try:
         aes_key = cipher_rsa.decrypt(_b64d(bundle["encrypted_aes_key"]))
@@ -284,7 +303,10 @@ def decrypt_file():
     original_hash = bundle["file_hash_sha256"]
     hash_match    = computed_hash == original_hash
 
-    sender_public_key = RSA.import_key(bundle["sender_public_key"])
+    try:
+        sender_public_key = RSA.import_key(_clean_pem(bundle["sender_public_key"]))
+    except Exception as e:
+        return jsonify({"error": f"Invalid sender public key format: {str(e)}"}), 400
     h = SHA256.new(plaintext)
     try:
         pkcs1_15.new(sender_public_key).verify(h, _b64d(bundle["signature"]))

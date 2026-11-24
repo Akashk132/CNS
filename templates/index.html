@@ -1584,7 +1584,20 @@ const fmt = bytes => {
 const ts = () => new Date().toLocaleTimeString();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const esc = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
-const api = async (url, o = {}) => { try { const r = await fetch(url, o); return await r.json(); } catch(e) { return {error:e.message}; } };
+const api = async (url, o = {}) => {
+    try {
+        const r = await fetch(url, o);
+        const text = await r.text();
+        try {
+            return JSON.parse(text);
+        } catch(jsonErr) {
+            const cleanMsg = text.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim().slice(0, 150);
+            return { error: `Server error (${r.status}): ${cleanMsg || 'Invalid server response'}` };
+        }
+    } catch(e) {
+        return { error: e.message };
+    }
+};
 const copyToClipboard = text => { navigator.clipboard.writeText(text).catch(() => {}); };
 
 function addLog(id, msg, cls='') {
