@@ -48,18 +48,26 @@
 <!-- ============================== HEADER ============================== -->
 <header class="header">
     <div class="header-inner">
-        <a class="header-brand" href="/">
+        <a class="header-brand" href="/" onclick="switchTab('dashboard'); return false;">
             <div class="header-logo">
                 <svg><use href="#i-shield"/></svg>
             </div>
             <div class="brand-text">
-                <h1>CryptoShield</h1>
-                <span>Advanced Cryptography Lab</span>
+                <h1>CryptoShield <span class="brand-version-badge">v2.4 Enterprise</span></h1>
+                <span>Zero-Trust Applied Cryptography Lab</span>
             </div>
         </a>
-        <div class="header-right">
-            <span class="status-dot"></span>
-            System Secure
+        <div class="header-right-group">
+            <div class="header-status-pill">
+                <span class="status-dot"></span>
+                <span>Zero-Trust Active</span>
+                <span class="status-sep">•</span>
+                <span style="color:var(--text-300)">FIPS 140-3</span>
+            </div>
+            <a class="header-action-btn" href="https://github.com/Akashk132/CNS" target="_blank" title="View Source on GitHub">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                <span>GitHub ↗</span>
+            </a>
         </div>
     </div>
 </header>
@@ -129,116 +137,332 @@
     <!-- ================== PANEL: DASHBOARD ================== -->
     <section class="panel active" id="p-dashboard">
 
-        <div class="hero">
-            <div class="hero-title">Advanced Cryptography with <span>CryptoShield</span></div>
-            <p class="hero-subtitle">
-                A complete cryptographic laboratory — file encryption, image encryption, steganography, multi-cipher comparison, QR-coded secrets, and a full PKI certificate simulator.
+        <!-- Modern Hero Section -->
+        <div class="hero-container">
+            <div class="hero-ambient-mesh"></div>
+
+            <div class="hero-badge-pill" onclick="switchTab('visualizer')">
+                <span class="hero-badge-dot"></span>
+                <span>Next-Gen Applied Cryptography Suite</span>
+                <span class="hero-badge-arrow">Explore Academy ➔</span>
+            </div>
+
+            <h1 class="hero-main-title">
+                Enterprise-Grade Cryptography &amp;<br>
+                <span class="gradient-text">Zero-Trust Data Protection</span>
+            </h1>
+
+            <p class="hero-main-subtitle">
+                High-assurance hybrid encryption combining <strong>AES-256-CBC</strong> hardware speed with <strong>RSA-2048-OAEP</strong> key transport, <strong>SHA-256</strong> integrity seals, and verifiable digital signatures.
             </p>
-        </div>
 
-        <div class="feature-grid">
-            <div class="feature-card" onclick="switchTab('imgcrypt')">
-                <div class="feature-icon" style="background:rgba(6,182,212,0.1);color:var(--cyan-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                </div>
-                <h3>Image Encryption</h3>
-                <p>Encrypt images with AES-256 and see pixel-level scrambling in real time. Decrypt to restore perfectly.</p>
+            <div class="hero-cta-group">
+                <button class="btn-hero-primary" onclick="switchTab('encrypt')">
+                    <span style="font-size:1.1rem">🛡️</span>
+                    <span>Encrypt &amp; Secure File</span>
+                    <span style="margin-left:4px">➔</span>
+                </button>
+                <button class="btn-hero-secondary" onclick="switchTab('decrypt')">
+                    <span style="font-size:1rem">🔓</span>
+                    <span>Decrypt &amp; Verify</span>
+                </button>
+                <button class="btn-hero-glass" onclick="switchTab('visualizer')">
+                    <span style="font-size:1rem">⚡</span>
+                    <span>Algorithm Academy ↗</span>
+                </button>
             </div>
-            <div class="feature-card" onclick="switchTab('steg')">
-                <div class="feature-icon" style="background:rgba(99,102,241,0.1);color:var(--indigo-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </div>
-                <h3>Steganography Lab</h3>
-                <p>Hide secret messages inside images using LSB encoding. The image looks identical — the secret is invisible.</p>
-            </div>
-            <div class="feature-card" onclick="switchTab('playground')">
-                <div class="feature-icon" style="background:rgba(245,158,11,0.1);color:var(--amber-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
-                </div>
-                <h3>Cipher Playground</h3>
-                <p>Compare AES-256, DES, Caesar, and Vigenère ciphers side-by-side on the same plaintext.</p>
-            </div>
-            <div class="feature-card" onclick="switchTab('qrvault')">
-                <div class="feature-icon" style="background:rgba(52,211,153,0.1);color:var(--green-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3"/><rect x="16" y="5" width="3" height="3"/><rect x="5" y="16" width="3" height="3"/></svg>
-                </div>
-                <h3>QR Code Secret Vault</h3>
-                <p>Encrypt a message and embed it in a QR code. Only the keyholder can decode it.</p>
-            </div>
-            <div class="feature-card" onclick="switchTab('pki')">
-                <div class="feature-icon" style="background:rgba(248,113,113,0.1);color:var(--red-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-                </div>
-                <h3>PKI Certificate Simulator</h3>
-                <p>Create Root CAs, issue X.509 certificates, and verify a full chain of trust.</p>
-            </div>
-            <div class="feature-card" onclick="switchTab('visualizer')" style="border-color:rgba(6,182,212,0.3);background:linear-gradient(135deg, rgba(6,182,212,0.06), rgba(99,102,241,0.06))">
-                <div class="feature-icon" style="background:rgba(6,182,212,0.15);color:var(--cyan-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                </div>
-                <h3>Algorithm Academy</h3>
-                <p>Interactive step-by-step animations: AES 4x4 matrix rounds, RSA math stepper, Avalanche heatmap, and ECB vs CBC leak analysis.</p>
-            </div>
-            <div class="feature-card" onclick="switchTab('encrypt')">
-                <div class="feature-icon" style="background:rgba(96,165,250,0.1);color:var(--blue-400)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                </div>
-                <h3>Hybrid File Encryption</h3>
-                <p>AES-256-CBC + RSA-2048-OAEP + SHA-256 + Digital Signatures for full-stack file security.</p>
-            </div>
-        </div>
 
-        <div class="metrics" style="margin-top:1.5rem">
-            <div class="metric">
-                <div class="metric-value" id="s-users">0</div>
-                <div class="metric-label">Users</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value" id="s-bundles">0</div>
-                <div class="metric-label">Bundles</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">AES-256</div>
-                <div class="metric-label">Encryption</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">RSA-2048</div>
-                <div class="metric-label">Key Exchange</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">SHA-256</div>
-                <div class="metric-label">Integrity</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">X.509</div>
-                <div class="metric-label">PKI Certs</div>
+            <!-- Floating Interactive Security Console Mockup (Inspired by Taskora / CloudX) -->
+            <div class="hero-floating-console">
+                <div class="console-top-bar">
+                    <div class="console-window-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="console-title-pill">
+                        <span class="icon" style="color:var(--cyan-400)"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg></span>
+                        <span>Cryptographic Co-Processor — Active Defense Matrix</span>
+                    </div>
+                    <div class="console-status-tag">
+                        <span class="pulse-radar"></span>
+                        <span>All Systems Operational</span>
+                    </div>
+                </div>
+
+                <div class="console-grid">
+                    <div class="console-cell">
+                        <div class="cell-head">
+                            <span class="cell-dot cyan"></span>
+                            <span>Bulk Cipher</span>
+                        </div>
+                        <div class="cell-val">AES-256-CBC</div>
+                        <div class="cell-desc">14 SP-Network Rounds • AES-NI Accelerated</div>
+                    </div>
+
+                    <div class="console-cell">
+                        <div class="cell-head">
+                            <span class="cell-dot purple"></span>
+                            <span>Key Encapsulation</span>
+                        </div>
+                        <div class="cell-val">RSA-2048-OAEP</div>
+                        <div class="cell-desc">IND-CCA2 Security • MGF1 SHA-256 Mask</div>
+                    </div>
+
+                    <div class="console-cell">
+                        <div class="cell-head">
+                            <span class="cell-dot emerald"></span>
+                            <span>Integrity Digest</span>
+                        </div>
+                        <div class="cell-val">SHA-256</div>
+                        <div class="cell-desc">256-bit Digest • Zero-Tamper Verification</div>
+                    </div>
+
+                    <div class="console-cell">
+                        <div class="cell-head">
+                            <span class="cell-dot amber"></span>
+                            <span>Digital Signature</span>
+                        </div>
+                        <div class="cell-val">PKCS#1 v1.5</div>
+                        <div class="cell-desc">2048-bit Signature • Non-Repudiation</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-layers"/></svg></span>
-                Cryptographic Pipeline
+        <!-- Sleek KPI Floating Metric Row -->
+        <div class="kpi-grid">
+            <div class="kpi-card" onclick="switchTab('keygen')">
+                <div class="kpi-icon-wrap" style="background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="kpi-content">
+                    <div class="kpi-value"><span id="s-users">0</span> <span class="kpi-unit">Registered</span></div>
+                    <div class="kpi-label">Active Keypairs</div>
+                </div>
+                <span class="kpi-badge ok">RSA-2048</span>
+            </div>
+
+            <div class="kpi-card" onclick="switchTab('decrypt')">
+                <div class="kpi-icon-wrap" style="background:rgba(99, 102, 241, 0.12); color:#818cf8;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <div class="kpi-content">
+                    <div class="kpi-value"><span id="s-bundles">0</span> <span class="kpi-unit">Stored</span></div>
+                    <div class="kpi-label">Secured Bundles</div>
+                </div>
+                <span class="kpi-badge blue">AES-256-CBC</span>
+            </div>
+
+            <div class="kpi-card" onclick="switchTab('tamper')">
+                <div class="kpi-icon-wrap" style="background:rgba(16, 185, 129, 0.12); color:#34d399;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div class="kpi-content">
+                    <div class="kpi-value">100% <span class="kpi-unit">Verified</span></div>
+                    <div class="kpi-label">Tamper Resistance</div>
+                </div>
+                <span class="kpi-badge ok">4-Gate Defended</span>
+            </div>
+
+            <div class="kpi-card" onclick="switchTab('pki')">
+                <div class="kpi-icon-wrap" style="background:rgba(245, 158, 11, 0.12); color:#fbbf24;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                </div>
+                <div class="kpi-content">
+                    <div class="kpi-value">X.509 <span class="kpi-unit">Hierarchy</span></div>
+                    <div class="kpi-label">PKI Trust Chains</div>
+                </div>
+                <span class="kpi-badge amber">RFC 5280</span>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="section-header-row">
+            <div>
+                <h3 class="section-title">Cryptographic Laboratories &amp; Suites</h3>
+                <p class="section-subtitle">Explore 8 specialized modules covering modern and classical cryptography, digital signatures, and steganography.</p>
+            </div>
+            <span class="section-count-pill">8 Modules</span>
+        </div>
+
+        <!-- Modern Bento-Grid Feature Cards -->
+        <div class="bento-grid">
+            <!-- 1. Featured Spotlight Card: Hybrid File Encryption (Spans 2 columns on wide screens) -->
+            <div class="bento-card bento-spotlight" onclick="switchTab('encrypt')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:linear-gradient(135deg, #0284c7, #2563eb); color:#fff; box-shadow:0 0 16px rgba(37,99,235,0.4)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <span class="bento-pill-tag brand">Core Architecture</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Hybrid File Encryption &amp; Digital Signatures</h3>
+                    <p class="bento-desc">Combines hardware-speed AES-256-CBC bulk encryption with RSA-2048-OAEP session key transport. Ingests arbitrary documents, seals them with SHA-256 fingerprints, and signs them with asymmetric private keys.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Open Encryption Studio ➔</span>
+                    <div class="bento-chips">
+                        <span>AES-256-CBC</span>
+                        <span>RSA-2048-OAEP</span>
+                        <span>SHA-256</span>
+                        <span>PKCS#1 v1.5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Algorithm Academy -->
+            <div class="bento-card bento-purple" onclick="switchTab('visualizer')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#fff; box-shadow:0 0 16px rgba(124,58,237,0.4)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    </div>
+                    <span class="bento-pill-tag purple">Interactive Engine</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Algorithm Academy</h3>
+                    <p class="bento-desc">Interactive step-by-step state engines: 4×4 AES state matrix transformations (SubBytes, ShiftRows, MixColumns), RSA modular math stepper, and Avalanche effect heatmaps.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Open Academy ➔</span>
+                </div>
+            </div>
+
+            <!-- 3. Steganography Lab -->
+            <div class="bento-card" onclick="switchTab('steg')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(56, 189, 248, 0.15); color:#38bdf8;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <span class="bento-pill-tag cyan">Spatial Domain</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Steganography &amp; 8×8 Magnifier</h3>
+                    <p class="bento-desc">Conceal secret messages into 24-bit RGB pixel channels via vectorized NumPy LSB injection. Inspect binary bits in real-time with the live 8×8 zoomed pixel magnifier.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Inspect Pixels ➔</span>
+                </div>
+            </div>
+
+            <!-- 4. Tamper Simulation Lab -->
+            <div class="bento-card" onclick="switchTab('tamper')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(239, 68, 68, 0.15); color:#f87171;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <span class="bento-pill-tag red">MITM Attack Lab</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Tamper Simulation Lab</h3>
+                    <p class="bento-desc">Simulate active man-in-the-middle attacks: flip ciphertext bits, forge digital signatures, and watch how the 4-Gate security verification pipeline intercepts tampering.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Simulate Attacks ➔</span>
+                </div>
+            </div>
+
+            <!-- 5. Digital Image Encryption -->
+            <div class="bento-card" onclick="switchTab('imgcrypt')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(16, 185, 129, 0.15); color:#34d399;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <span class="bento-pill-tag emerald">Raster Cipher</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Digital Image Encryption</h3>
+                    <p class="bento-desc">Scramble raster photos into high-entropy pseudo-random noise matrices. Compare ECB pattern leakage vs CBC spatial diffusion across pixel blocks.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Scramble Images ➔</span>
+                </div>
+            </div>
+
+            <!-- 6. Cipher Playground -->
+            <div class="bento-card" onclick="switchTab('playground')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(245, 158, 11, 0.15); color:#fbbf24;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                    </div>
+                    <span class="bento-pill-tag amber">Classical vs Modern</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">Cipher Playground</h3>
+                    <p class="bento-desc">Benchmark ancient classical ciphers (Caesar, Vigenère) and legacy ciphers (DES) against modern AES-256 side-by-side on identical plaintext inputs.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Compare Ciphers ➔</span>
+                </div>
+            </div>
+
+            <!-- 7. PKI Certificate Simulator -->
+            <div class="bento-card" onclick="switchTab('pki')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(236, 72, 153, 0.15); color:#f472b6;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                    </div>
+                    <span class="bento-pill-tag pink">Trust Chain</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">PKI Certificate Simulator</h3>
+                    <p class="bento-desc">Simulate public key infrastructure: establish Root CAs, sign X.509 identity certificates, and recursively validate multi-tier chains of trust.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Manage PKI ➔</span>
+                </div>
+            </div>
+
+            <!-- 8. QR Secret Vault -->
+            <div class="bento-card" onclick="switchTab('qrvault')">
+                <div class="bento-top">
+                    <div class="bento-icon-box" style="background:rgba(14, 165, 233, 0.15); color:#38bdf8;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </div>
+                    <span class="bento-pill-tag cyan">Air-Gapped</span>
+                </div>
+                <div class="bento-body">
+                    <h3 class="bento-title">QR Code Secret Vault</h3>
+                    <p class="bento-desc">Encode encrypted payloads into scannable optical QR matrices for air-gapped, zero-network key distribution and secret storage.</p>
+                </div>
+                <div class="bento-footer">
+                    <span class="bento-action-link">Open QR Vault ➔</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sleek Cryptographic Pipeline Visual Track -->
+        <div class="card" style="margin-top:2rem;background:rgba(12,18,32,0.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08)">
+            <div class="card-header" style="justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="icon" style="color:var(--cyan-400)"><svg><use href="#i-layers"/></svg></span>
+                    <span>End-to-End Cryptographic Flow Architecture</span>
+                </div>
+                <button class="player-btn-sm" onclick="switchTab('encrypt')" style="cursor:pointer">Launch Flow ➔</button>
             </div>
             <div class="pipeline">
-                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-file"/></svg></span> Original File</div>
+                <div class="pipe-step completed" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-file"/></svg></span> 1. File Ingest</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-hash"/></svg></span> SHA-256 Hash</div>
+                <div class="pipe-step completed" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-hash"/></svg></span> 2. SHA-256 Digest</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-pen-tool"/></svg></span> RSA Sign</div>
+                <div class="pipe-step completed" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-pen-tool"/></svg></span> 3. RSA Sign</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-lock"/></svg></span> AES-256 Encrypt</div>
+                <div class="pipe-step completed" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-lock"/></svg></span> 4. AES-256 Encrypt</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step completed"><span class="icon"><svg><use href="#i-key"/></svg></span> RSA Key Wrap</div>
+                <div class="pipe-step completed" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-key"/></svg></span> 5. OAEP Key Wrap</div>
                 <span class="pipe-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-                <div class="pipe-step current"><span class="icon"><svg><use href="#i-box"/></svg></span> Secure Bundle</div>
+                <div class="pipe-step current" onclick="switchTab('encrypt')"><span class="icon"><svg><use href="#i-box"/></svg></span> 6. Secure Bundle</div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="icon"><svg><use href="#i-box"/></svg></span>
-                Encrypted Bundles
+        <!-- Recent Encrypted Packages Table -->
+        <div class="card" style="margin-top:1.5rem;background:rgba(12,18,32,0.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08)">
+            <div class="card-header" style="justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="icon" style="color:var(--indigo-400)"><svg><use href="#i-box"/></svg></span>
+                    <span>Secured Cryptographic Bundles Repository</span>
+                </div>
+                <button class="player-btn-sm" onclick="switchTab('decrypt')" style="cursor:pointer">Decrypt &amp; Verify All ➔</button>
             </div>
             <div id="dash-bundles">
                 <div class="empty"><p>No encrypted bundles yet. Use <strong>Encrypt</strong> to create one.</p></div>
