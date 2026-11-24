@@ -1489,6 +1489,21 @@ function updateSecurityGate(id, passed, label) {
     }
 }
 
+function updateHybridFlowStep(step) {
+    const steps = ['file', 'hash', 'sig', 'aes', 'wrap', 'pkg'];
+    const idx = steps.indexOf(step);
+    steps.forEach((s, i) => {
+        const el = document.getElementById('fn-' + s);
+        if (!el) return;
+        el.classList.remove('active', 'completed');
+        if (i < idx) {
+            el.classList.add('completed');
+        } else if (i === idx) {
+            el.classList.add('active');
+        }
+    });
+}
+
 
 function switchAcademyTab(tabId) {
     document.querySelectorAll('#academy-tabs .edu-tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -2237,47 +2252,56 @@ async function encryptFile() {
     const btn = document.getElementById('btn-encrypt');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Encrypting…';
 
-    const lc = document.getElementById('enc-log-card'); lc.style.display = 'block';
-    document.getElementById('enc-log').innerHTML = '';
+    const lc = document.getElementById('enc-log-card'); if (lc) lc.style.display = 'block';
+    const logEl = document.getElementById('enc-log'); if (logEl) logEl.innerHTML = '';
 
-    addLog('enc-log', `Encrypting "${selectedFile.name}" (${fmt(selectedFile.size)})`, 'info');
-    addLog('enc-log', `Sender: ${sender}  |  Receiver: ${receiver}`, 'info');
-    updateHybridFlowStep('file');
-    await sleep(40); addLog('enc-log', 'Computing SHA-256 hash…'); updateHybridFlowStep('hash');
-    await sleep(40); addLog('enc-log', 'Signing hash with sender RSA private key…'); updateHybridFlowStep('sig');
-    await sleep(40); addLog('enc-log', 'Generating 256-bit AES session key…'); updateHybridFlowStep('aes');
-    await sleep(40); addLog('enc-log', 'Encrypting file with AES-256-CBC…');
-    await sleep(40); addLog('enc-log', 'Wrapping AES key with receiver RSA public key (OAEP)…'); updateHybridFlowStep('wrap');
+    try {
+        addLog('enc-log', `Encrypting "${selectedFile.name}" (${fmt(selectedFile.size)})`, 'info');
+        addLog('enc-log', `Sender: ${sender}  |  Receiver: ${receiver}`, 'info');
+        updateHybridFlowStep('file');
+        await sleep(30); addLog('enc-log', 'Computing SHA-256 hash…'); updateHybridFlowStep('hash');
+        await sleep(30); addLog('enc-log', 'Signing hash with sender RSA private key…'); updateHybridFlowStep('sig');
+        await sleep(30); addLog('enc-log', 'Generating 256-bit AES session key…'); updateHybridFlowStep('aes');
+        await sleep(30); addLog('enc-log', 'Encrypting file with AES-256-CBC…');
+        await sleep(30); addLog('enc-log', 'Wrapping AES key with receiver RSA public key (OAEP)…'); updateHybridFlowStep('wrap');
 
-    const fd = new FormData();
-    fd.append('file', selectedFile); fd.append('sender', sender); fd.append('receiver', receiver);
-    const d = await api('/api/encrypt', { method:'POST', body:fd });
+        const fd = new FormData();
+        fd.append('file', selectedFile); fd.append('sender', sender); fd.append('receiver', receiver);
+        const d = await api('/api/encrypt', { method:'POST', body:fd });
 
-    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt &amp; Sign`;
-    const el = document.getElementById('enc-result');
-
-    if (d.error) {
-        addLog('enc-log', `ERROR: ${d.error}`, 'err');
-        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Encryption Failed</div><div class="result-body"><p style="color:var(--text-300)">${d.error}</p></div></div>`;
-    } else {
-        addLog('enc-log', 'Bundle created successfully', 'ok');
-        updateHybridFlowStep('pkg');
-        addLog('enc-log', `Bundle ID: ${d.bundle_id}`, 'ok');
-        el.innerHTML = `
-        <div class="result">
-            <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
-            <div class="result-body">
-                <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
-                <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
-                <div class="result-row"><span class="result-key">Original Size</span><span class="result-val">${fmt(d.original_size)}</span></div>
-                <div class="result-row"><span class="result-key">Encrypted Size</span><span class="result-val">${fmt(d.encrypted_size)}</span></div>
-                <div class="result-row"><span class="result-key">Suite</span><span class="result-val accent">${d.algorithm_suite}</span></div>
-                <div class="mono-block"><span class="mono-label">SHA-256 File Hash</span>${d.file_hash_sha256}</div>
-                <div class="mono-block"><span class="mono-label">Digital Signature (preview)</span>${d.signature_preview}</div>
-            </div>
-        </div>`;
+        const el = document.getElementById('enc-result');
+        if (d.error) {
+            addLog('enc-log', `ERROR: ${d.error}`, 'err');
+            if (el) el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Encryption Failed</div><div class="result-body"><p style="color:var(--text-300)">${d.error}</p></div></div>`;
+        } else {
+            addLog('enc-log', 'Bundle created successfully', 'ok');
+            updateHybridFlowStep('pkg');
+            addLog('enc-log', `Bundle ID: ${d.bundle_id}`, 'ok');
+            if (el) {
+                el.innerHTML = `
+                <div class="result">
+                    <div class="result-bar ok"><span class="icon">${IC.check}</span> ${esc(d.message)}</div>
+                    <div class="result-body">
+                        <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
+                        <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
+                        <div class="result-row"><span class="result-key">Original Size</span><span class="result-val">${fmt(d.original_size)}</span></div>
+                        <div class="result-row"><span class="result-key">Encrypted Size</span><span class="result-val">${fmt(d.encrypted_size)}</span></div>
+                        <div class="result-row"><span class="result-key">Suite</span><span class="result-val accent">${d.algorithm_suite}</span></div>
+                        <div class="mono-block"><span class="mono-label">SHA-256 File Hash</span>${d.file_hash_sha256}</div>
+                        <div class="mono-block"><span class="mono-label">Digital Signature (preview)</span>${d.signature_preview}</div>
+                    </div>
+                </div>`;
+            }
+        }
+    } catch (err) {
+        addLog('enc-log', `ERROR: ${err.message}`, 'err');
+        const el = document.getElementById('enc-result');
+        if (el) el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Error</div><div class="result-body"><p style="color:var(--text-300)">${err.message}</p></div></div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span class="icon"><svg><use href="#i-lock"/></svg></span> Encrypt &amp; Sign`;
+        refreshData();
     }
-    refreshData();
 }
 
 // ── Decrypt
@@ -2289,69 +2313,79 @@ async function decryptBundle() {
 
     resetSecurityGates();
 
-    const lc = document.getElementById('dec-log-card'); lc.style.display = 'block';
-    document.getElementById('dec-log').innerHTML = '';
+    const lc = document.getElementById('dec-log-card'); if (lc) lc.style.display = 'block';
+    const logEl = document.getElementById('dec-log'); if (logEl) logEl.innerHTML = '';
 
-    addLog('dec-log', `Decrypting bundle "${bid}"`, 'info');
-    
-    // Animate Gate 1: RSA-OAEP
-    const gKey = document.getElementById('gate-key'); if (gKey) gKey.classList.add('active');
-    await sleep(40); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
-    
-    // Animate Gate 2: AES-CBC
-    const gAes = document.getElementById('gate-aes'); if (gAes) gAes.classList.add('active');
-    await sleep(40); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
-    
-    // Animate Gate 3: SHA-256
-    const gHash = document.getElementById('gate-hash'); if (gHash) gHash.classList.add('active');
-    await sleep(40); addLog('dec-log', 'Recomputing SHA-256 hash…');
-    
-    // Animate Gate 4: Signature
-    const gSig = document.getElementById('gate-sig'); if (gSig) gSig.classList.add('active');
-    await sleep(40); addLog('dec-log', 'Verifying digital signature…');
+    try {
+        addLog('dec-log', `Decrypting bundle "${bid}"`, 'info');
+        
+        // Animate Gate 1: RSA-OAEP
+        const gKey = document.getElementById('gate-key'); if (gKey) gKey.classList.add('active');
+        await sleep(30); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
+        
+        // Animate Gate 2: AES-CBC
+        const gAes = document.getElementById('gate-aes'); if (gAes) gAes.classList.add('active');
+        await sleep(30); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
+        
+        // Animate Gate 3: SHA-256
+        const gHash = document.getElementById('gate-hash'); if (gHash) gHash.classList.add('active');
+        await sleep(30); addLog('dec-log', 'Recomputing SHA-256 hash…');
+        
+        // Animate Gate 4: Signature
+        const gSig = document.getElementById('gate-sig'); if (gSig) gSig.classList.add('active');
+        await sleep(30); addLog('dec-log', 'Verifying digital signature…');
 
-    const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
-    btn.disabled = false; btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify &amp; Authenticate`;
+        const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
 
-    const el = document.getElementById('dec-result');
-    if (d.error) {
-        addLog('dec-log', `ERROR: ${d.error}`, 'err');
-        el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
-        return;
+        const el = document.getElementById('dec-result');
+        if (d.error) {
+            addLog('dec-log', `ERROR: ${d.error}`, 'err');
+            if (el) el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> ${esc(d.error)}</div></div>`;
+            return;
+        }
+
+        const bad = d.tamper_detected;
+        updateSecurityGate('gate-key', true, 'Key Unwrapped ✅');
+        updateSecurityGate('gate-aes', true, 'Decrypted ✅');
+        updateSecurityGate('gate-hash', d.hash_match, d.hash_match ? 'Match ✅' : 'MISMATCH ❌');
+        updateSecurityGate('gate-sig', d.signature_valid, d.signature_valid ? 'Valid ✅' : 'FORGERY ❌');
+
+        if (bad) {
+            addLog('dec-log', 'TAMPER DETECTED', 'err');
+            if (!d.hash_match) addLog('dec-log', '  SHA-256 hash mismatch (Gate 3 failed)', 'err');
+            if (!d.signature_valid) addLog('dec-log', '  Signature invalid (Gate 4 failed)', 'err');
+        } else {
+            addLog('dec-log', 'Integrity check PASSED (SHA-256)', 'ok');
+            addLog('dec-log', 'Sender authentication VERIFIED', 'ok');
+            addLog('dec-log', 'File is TRUSTED', 'ok');
+        }
+
+        if (el) {
+            el.innerHTML = `
+            <div class="result">
+                <div class="result-bar ${bad?'err':'ok'}"><span class="icon">${bad?IC.x:IC.check}</span> ${esc(d.overall_status)}</div>
+                <div class="result-body">
+                    <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
+                    <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
+                    <div class="result-row"><span class="result-key">Decrypted Size</span><span class="result-val">${fmt(d.decrypted_size)}</span></div>
+                    <div class="result-row"><span class="result-key">Integrity (SHA-256)</span><span class="result-val ${d.hash_match?'ok':'err'}">${d.integrity}</span></div>
+                    <div class="result-row"><span class="result-key">Authentication</span><span class="result-val ${d.signature_valid?'ok':'err'}">${d.authentication}</span></div>
+                    <div class="hash-compare">
+                        <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Original Hash</div><div class="hash-val">${d.original_hash}</div></div>
+                        <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Computed Hash</div><div class="hash-val">${d.computed_hash}</div></div>
+                    </div>
+                    ${d.is_text ? `<div class="mono-block" style="margin-top:10px"><span class="mono-label">Decrypted Preview</span>${esc(d.file_preview)}</div>` : `<div style="margin-top:10px;color:var(--text-400);font-size:0.82rem">Binary file — ${fmt(d.decrypted_size)}</div>`}
+                </div>
+            </div>`;
+        }
+    } catch (err) {
+        addLog('dec-log', `ERROR: ${err.message}`, 'err');
+        const el = document.getElementById('dec-result');
+        if (el) el.innerHTML = `<div class="result"><div class="result-bar err"><span class="icon">${IC.x}</span> Error</div><div class="result-body"><p style="color:var(--text-300)">${err.message}</p></div></div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span class="icon"><svg><use href="#i-unlock"/></svg></span> Decrypt, Verify &amp; Authenticate`;
     }
-
-    const bad = d.tamper_detected;
-    updateSecurityGate('gate-key', true, 'Key Unwrapped ✅');
-    updateSecurityGate('gate-aes', true, 'Decrypted ✅');
-    updateSecurityGate('gate-hash', d.hash_match, d.hash_match ? 'Match ✅' : 'MISMATCH ❌');
-    updateSecurityGate('gate-sig', d.signature_valid, d.signature_valid ? 'Valid ✅' : 'FORGERY ❌');
-
-    if (bad) {
-        addLog('dec-log', 'TAMPER DETECTED', 'err');
-        if (!d.hash_match) addLog('dec-log', '  SHA-256 hash mismatch (Gate 3 failed)', 'err');
-        if (!d.signature_valid) addLog('dec-log', '  Signature invalid (Gate 4 failed)', 'err');
-    } else {
-        addLog('dec-log', 'Integrity check PASSED (SHA-256)', 'ok');
-        addLog('dec-log', 'Sender authentication VERIFIED', 'ok');
-        addLog('dec-log', 'File is TRUSTED', 'ok');
-    }
-
-    el.innerHTML = `
-    <div class="result">
-        <div class="result-bar ${bad?'err':'ok'}"><span class="icon">${bad?IC.x:IC.check}</span> ${esc(d.overall_status)}</div>
-        <div class="result-body">
-            <div class="result-row"><span class="result-key">Bundle ID</span><span class="result-val accent">${d.bundle_id}</span></div>
-            <div class="result-row"><span class="result-key">File</span><span class="result-val">${esc(d.original_filename)}</span></div>
-            <div class="result-row"><span class="result-key">Decrypted Size</span><span class="result-val">${fmt(d.decrypted_size)}</span></div>
-            <div class="result-row"><span class="result-key">Integrity (SHA-256)</span><span class="result-val ${d.hash_match?'ok':'err'}">${d.integrity}</span></div>
-            <div class="result-row"><span class="result-key">Authentication</span><span class="result-val ${d.signature_valid?'ok':'err'}">${d.authentication}</span></div>
-            <div class="hash-compare">
-                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Original Hash</div><div class="hash-val">${d.original_hash}</div></div>
-                <div class="hash-box ${d.hash_match?'match':'mismatch'}"><div class="hash-label">Computed Hash</div><div class="hash-val">${d.computed_hash}</div></div>
-            </div>
-            ${d.is_text ? `<div class="mono-block"><span class="mono-label">Decrypted Preview</span>${esc(d.file_preview)}</div>` : `<div style="margin-top:10px;color:var(--text-400);font-size:0.82rem">Binary file — ${fmt(d.decrypted_size)}</div>`}
-        </div>
-    </div>`;
 }
 
 // ── Tamper
