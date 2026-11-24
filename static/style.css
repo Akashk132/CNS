@@ -1841,8 +1841,12 @@ body::before { display: none; }
     background: #090e1a;
     border: 1px solid #1e293b;
     border-radius: 8px;
-    padding: 1.25rem;
+    padding: 1.1rem;
     margin-top: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     animation: fadeInStage 0.3s ease;
 }
 
@@ -1898,13 +1902,15 @@ body::before { display: none; }
 
 .stage-flow-grid {
     display: grid;
-    grid-template-columns: 1fr 200px 1fr;
-    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
     align-items: stretch;
-    margin: 14px 0;
+    margin: 12px 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 860px) {
     .stage-flow-grid {
         grid-template-columns: 1fr;
     }
@@ -1914,10 +1920,14 @@ body::before { display: none; }
     background: #050811;
     border: 1px solid #1e293b;
     border-radius: 6px;
-    padding: 14px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     position: relative;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .stage-box.input-box {
@@ -1956,32 +1966,43 @@ body::before { display: none; }
 
 .stage-code-preview {
     font-family: var(--font-mono, monospace);
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     background: #020408;
     border: 1px solid #141c2c;
     border-radius: 5px;
-    padding: 10px;
+    padding: 8px 10px;
     color: var(--text-200);
-    line-height: 1.45;
-    overflow-x: auto;
-    max-height: 150px;
+    line-height: 1.4;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 105px;
     white-space: pre-wrap;
     word-break: break-all;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     flex-grow: 1;
 }
 
 .stage-hex-box {
     font-family: var(--font-mono, monospace);
-    font-size: 0.73rem;
+    font-size: 0.71rem;
     color: #38bdf8;
     background: #020408;
     border: 1px solid #141c2c;
     border-radius: 5px;
-    padding: 10px;
-    line-height: 1.45;
-    max-height: 150px;
+    padding: 8px 10px;
+    line-height: 1.4;
+    max-height: 105px;
+    overflow-x: hidden;
     overflow-y: auto;
+    white-space: pre-wrap;
     word-break: break-all;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     flex-grow: 1;
 }
 
