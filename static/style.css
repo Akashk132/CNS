@@ -2408,130 +2408,158 @@ body::before { display: none; }
     transform: translateY(-2px);
 }
 
-/* Floating Interactive Security Console Mockup (Inspired by Taskora / CloudX) */
-.hero-floating-console {
+/* Clean Minimalist Hero Centerpiece (CloudX / Meditation Aesthetic) */
+.hero-centerpiece {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 1.5rem auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shield-orb-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(99, 102, 241, 0.2) 45%, transparent 70%);
+    filter: blur(28px);
+    pointer-events: none;
+    animation: orbPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes orbPulse {
+    0% { transform: scale(0.9); opacity: 0.65; }
+    100% { transform: scale(1.15); opacity: 1; }
+}
+
+.shield-cyber-ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.shield-cyber-ring.ring-outer {
+    width: 210px;
+    height: 210px;
+    border: 1px dashed rgba(56, 189, 248, 0.28);
+    animation: rotateRing 24s linear infinite;
+}
+
+.shield-cyber-ring.ring-inner {
+    width: 160px;
+    height: 160px;
+    border: 1px dotted rgba(129, 140, 248, 0.35);
+    animation: rotateRingRev 16s linear infinite;
+}
+
+@keyframes rotateRing {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotateRingRev {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+.shield-core-badge {
+    position: relative;
+    z-index: 2;
+    width: 96px;
+    height: 96px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 0 28px rgba(56, 189, 248, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(16px);
+}
+
+.shield-icon-wrap {
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.65));
+}
+
+.shield-svg {
+    width: 44px;
+    height: 44px;
+}
+
+/* Floating Micro Pills */
+.floating-pill {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+    color: #e2e8f0;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+}
+
+.floating-pill:hover {
+    transform: translateY(-2px);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+}
+
+.floating-pill.pill-left {
+    top: 25px;
+    left: -20px;
+}
+
+.floating-pill.pill-right {
+    top: 30px;
+    right: -25px;
+}
+
+.floating-pill.pill-bottom {
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.floating-pill.pill-bottom:hover {
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.pill-dot.cyan { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+.pill-dot.purple { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+.pill-dot.emerald { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+.hero-status-subtext {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
     position: relative;
     z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    background: rgba(8, 12, 22, 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 14px 18px 18px;
-    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.console-top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.console-window-dots {
-    display: flex;
-    gap: 6px;
-}
-
-.console-window-dots .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-.console-window-dots .dot.red { background: #ef4444; }
-.console-window-dots .dot.yellow { background: #f59e0b; }
-.console-window-dots .dot.green { background: #10b981; }
-
-.console-title-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--text-200);
-}
-
-.console-status-tag {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    color: #34d399;
-    font-weight: 600;
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    padding: 3px 10px;
-    border-radius: 9999px;
-}
-
-.pulse-radar {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #34d399;
-    box-shadow: 0 0 8px #34d399;
-}
-
-.console-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    text-align: left;
-}
-
-@media (max-width: 800px) {
-    .console-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.console-cell {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
-    padding: 10px 12px;
-}
-
-.cell-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.68rem;
-    color: var(--text-400);
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-
-.cell-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-.cell-dot.cyan { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
-.cell-dot.purple { background: #c084fc; box-shadow: 0 0 6px #c084fc; }
-.cell-dot.emerald { background: #34d399; box-shadow: 0 0 6px #34d399; }
-.cell-dot.amber { background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
-
-.cell-val {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #ffffff;
-    font-family: var(--font-mono, monospace);
-    margin-bottom: 2px;
-}
-
-.cell-desc {
-    font-size: 0.68rem;
-    color: var(--text-400);
-    line-height: 1.35;
 }
 
 /* KPI Metric Cards Grid */
