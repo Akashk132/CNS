@@ -720,6 +720,17 @@
                     Click any pixel in the 8×8 zoomed grid to inspect its 24-bit RGB binary channels and observe the exact bit-level modification.
                 </p>
 
+                <div style="font-size:0.75rem;color:var(--text-300);margin-bottom:10px;text-align:center;display:flex;justify-content:center;gap:18px;align-items:center">
+                    <span style="display:inline-flex;align-items:center;gap:6px">
+                        <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981"></span>
+                        <strong style="color:var(--green-400)">Green Dot:</strong> Secret Bit(s) Injected
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:6px">
+                        <span style="display:inline-block;width:9px;height:9px;border-radius:2px;border:1px solid rgba(255,255,255,0.25)"></span>
+                        <strong style="color:var(--text-400)">Plain:</strong> Unmodified Carrier Pixel
+                    </span>
+                </div>
+
                 <div class="magnifier-grid" id="mag-grid">
                     <!-- 64 pixels rendered by JS -->
                 </div>
@@ -3043,9 +3054,9 @@ function initStegMagnifier(origB64, stegB64) {
     const imgS = new Image();
 
     imgO.onload = () => {
-        ctxO.drawImage(imgO, 0, 0, 8, 8);
+        ctxO.drawImage(imgO, 0, 0, 8, 8, 0, 0, 8, 8);
         imgS.onload = () => {
-            ctxS.drawImage(imgS, 0, 0, 8, 8);
+            ctxS.drawImage(imgS, 0, 0, 8, 8, 0, 0, 8, 8);
             renderMagnifierPixels(ctxO.getImageData(0, 0, 8, 8).data, ctxS.getImageData(0, 0, 8, 8).data);
         };
         imgS.src = 'data:image/png;base64,' + stegB64;
@@ -3058,6 +3069,8 @@ function renderMagnifierPixels(dataO, dataS) {
     if (!grid) return;
     grid.innerHTML = '';
 
+    let firstModifiedCell = null;
+
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             const idx = (y * 8 + x) * 4;
@@ -3065,20 +3078,21 @@ function renderMagnifierPixels(dataO, dataS) {
             const rS = dataS[idx], gS = dataS[idx + 1], bS = dataS[idx + 2];
 
             const cell = document.createElement('div');
-            cell.className = 'magnifier-pixel';
+            cell.className = 'magnifier-pixel mag-pixel';
             cell.style.backgroundColor = `rgb(${rS}, ${gS}, ${bS})`;
 
             const isModified = ((rO & 1) !== (rS & 1)) || ((gO & 1) !== (gS & 1)) || ((bO & 1) !== (bS & 1));
             if (isModified) {
                 cell.classList.add('modified');
-                cell.title = `Pixel (${x}, ${y}) - Modified LSB`;
+                cell.title = `Pixel (${x}, ${y}) - Modified LSB (Secret Data Injected)`;
+                if (!firstModifiedCell) firstModifiedCell = cell;
             } else {
-                cell.title = `Pixel (${x}, ${y}) - Unmodified`;
+                cell.title = `Pixel (${x}, ${y}) - Unmodified Carrier`;
             }
 
             cell.onclick = () => {
-                document.querySelectorAll('.magnifier-pixel').forEach(c => c.classList.remove('selected'));
-                cell.classList.add('selected');
+                document.querySelectorAll('.magnifier-pixel, .mag-pixel').forEach(c => c.classList.remove('selected', 'active'));
+                cell.classList.add('selected', 'active');
                 inspectPixelLSB(x, y, rO, gO, bO, rS, gS, bS);
             };
 
@@ -3086,9 +3100,12 @@ function renderMagnifierPixels(dataO, dataS) {
         }
     }
 
-    // Auto-inspect first pixel
-    const firstCell = grid.querySelector('.magnifier-pixel');
-    if (firstCell) firstCell.click();
+    if (firstModifiedCell) {
+        firstModifiedCell.click();
+    } else {
+        const firstCell = grid.querySelector('.magnifier-pixel');
+        if (firstCell) firstCell.click();
+    }
 }
 
 function inspectPixelLSB(x, y, rO, gO, bO, rS, gS, bS) {
@@ -3097,20 +3114,35 @@ function inspectPixelLSB(x, y, rO, gO, bO, rS, gS, bS) {
     const gEl = document.getElementById('mag-g-hud');
     const bEl = document.getElementById('mag-b-hud');
 
-    if (coordEl) coordEl.textContent = `X: ${x}, Y: ${y}`;
+    const isModified = ((rO & 1) !== (rS & 1)) || ((gO & 1) !== (gS & 1)) || ((bO & 1) !== (bS & 1));
+    const statusText = isModified 
+        ? '<span style="color:#10b981;font-weight:700">MODIFIED 🟢</span>' 
+        : '<span style="color:var(--text-400)">UNMODIFIED ⚪</span>';
 
-    const fmt = (origVal, stegVal) => {
+    if (coordEl) {
+        coordEl.innerHTML = `<strong>(${x}, ${y})</strong> <span style="font-size:0.68rem;color:var(--text-400)">#${y*8+x}</span><br>${statusText}`;
+    }
+
+    const fmt = (origVal, stegVal, name, color) => {
         const oBin = origVal.toString(2).padStart(8, '0');
         const sBin = stegVal.toString(2).padStart(8, '0');
         const oLsb = oBin[7];
         const sLsb = sBin[7];
         const changed = oLsb !== sLsb;
-        return `${sBin.slice(0, 7)}<strong style="color:${changed ? 'var(--cyan-400)' : 'var(--text-300)'};background:${changed ? 'rgba(6,182,212,0.2)' : 'transparent'};padding:0 2px;border-radius:2px">${sLsb}</strong> ${changed ? ' (flipped)' : ''}`;
+        return `
+            <div style="font-size:0.7rem;color:var(--text-400);margin-bottom:2px">
+                <span style="color:${color};font-weight:600">${name}:</span> ${origVal} → <strong style="color:var(--text-100)">${stegVal}</strong>
+            </div>
+            <div style="font-family:monospace;font-size:0.75rem;letter-spacing:1px">
+                ${sBin.slice(0, 7)}<strong style="color:${changed ? '#38bdf8' : 'var(--text-200)'};background:${changed ? 'rgba(56,189,248,0.25)' : 'transparent'};padding:1px 3px;border-radius:3px;border:${changed ? '1px solid rgba(56,189,248,0.5)' : 'none'}">${sLsb}</strong>
+                ${changed ? '<span style="color:#10b981;font-size:0.65rem;font-weight:700;margin-left:3px">FLIPPED</span>' : '<span style="color:var(--text-500);font-size:0.65rem;margin-left:3px">kept</span>'}
+            </div>
+        `;
     };
 
-    if (rEl) rEl.innerHTML = fmt(rO, rS);
-    if (gEl) gEl.innerHTML = fmt(gO, gS);
-    if (bEl) bEl.innerHTML = fmt(bO, bS);
+    if (rEl) rEl.innerHTML = fmt(rO, rS, 'Red', 'var(--red-400)');
+    if (gEl) gEl.innerHTML = fmt(gO, gS, 'Green', 'var(--green-400)');
+    if (bEl) bEl.innerHTML = fmt(bO, bS, 'Blue', 'var(--blue-400)');
 }
 
 // ── DES 16-Round Feistel Network Ladder

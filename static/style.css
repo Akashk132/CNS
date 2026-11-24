@@ -1361,19 +1361,47 @@ body::before { display: none; }
     border-radius: 4px;
 }
 
-.mag-pixel {
-    width: 28px;
-    height: 28px;
-    border-radius: 2px;
+.magnifier-pixel, .mag-pixel {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: transform 0.1s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.mag-pixel:hover, .mag-pixel.active {
-    transform: scale(1.18);
-    border-color: #38bdf8;
-    z-index: 2;
+.magnifier-pixel:hover, .mag-pixel:hover {
+    transform: scale(1.22);
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    z-index: 10;
+}
+
+.magnifier-pixel.selected, .magnifier-pixel.active, .mag-pixel.selected, .mag-pixel.active {
+    transform: scale(1.28);
+    outline: 3px solid #38bdf8 !important;
+    outline-offset: 2px;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+    z-index: 20;
+}
+
+.magnifier-pixel.modified::after, .mag-pixel.modified::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 6px #10b981;
+    pointer-events: none;
 }
 
 /* Caesar Wheel SVG */
