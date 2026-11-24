@@ -357,21 +357,26 @@
                 </div>
                 <!-- Live Cryptographic Data-Flow Visualizer -->
                 <div class="hybrid-flow-container" id="hybrid-flow-view" style="margin-bottom:1rem">
-                    <div style="font-size:0.75rem;font-weight:600;color:var(--text-400);text-transform:uppercase;margin-bottom:8px">
-                        Cryptographic Pipeline Flow
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <span style="font-size:0.75rem;font-weight:600;color:var(--text-400);text-transform:uppercase">
+                            Cryptographic Pipeline Flow
+                        </span>
+                        <span style="font-size:0.72rem;color:var(--cyan-400);cursor:pointer;font-weight:600" onclick="toggleEncDemoPlay()">
+                            ▶ Play Demo
+                        </span>
                     </div>
                     <div class="flow-step-bar">
-                        <div class="flow-node" id="fn-file"><span>📄</span><span>File Input</span></div>
+                        <div class="flow-node interactive-node" id="fn-file" onclick="setEncDemoStep(0)" title="Inspect Stage 1"><span>📄</span><span>File Input</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-node" id="fn-hash"><span>#️⃣</span><span>SHA-256</span></div>
+                        <div class="flow-node interactive-node" id="fn-hash" onclick="setEncDemoStep(1)" title="Inspect Stage 2"><span>#️⃣</span><span>SHA-256</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-node" id="fn-sig"><span>✍️</span><span>RSA Sign</span></div>
+                        <div class="flow-node interactive-node" id="fn-sig" onclick="setEncDemoStep(2)" title="Inspect Stage 3"><span>✍️</span><span>RSA Sign</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-node" id="fn-aes"><span>🔒</span><span>AES-256</span></div>
+                        <div class="flow-node interactive-node" id="fn-aes" onclick="setEncDemoStep(3)" title="Inspect Stage 4"><span>🔒</span><span>AES-256</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-node" id="fn-wrap"><span>🔑</span><span>OAEP Wrap</span></div>
+                        <div class="flow-node interactive-node" id="fn-wrap" onclick="setEncDemoStep(4)" title="Inspect Stage 5"><span>🔑</span><span>OAEP Wrap</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-node" id="fn-pkg"><span>📦</span><span>Bundle</span></div>
+                        <div class="flow-node interactive-node" id="fn-pkg" onclick="setEncDemoStep(5)" title="Inspect Stage 6"><span>📦</span><span>Bundle</span></div>
                     </div>
                 </div>
 
@@ -380,6 +385,72 @@
                     Encrypt &amp; Sign
                 </button>
             </div>
+        </div>
+
+        <!-- Live Cryptographic Engine Visualizer & Interactive Demo Walkthrough -->
+        <div class="card" id="enc-engine-card" style="margin-top:1.5rem">
+            <div class="card-header" style="justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+                    <span>Inside the Cryptographic Engine — Interactive Pipeline Walkthrough &amp; Demo</span>
+                </div>
+                <div class="player-controls-group">
+                    <button class="player-btn" id="btn-enc-play" onclick="toggleEncDemoPlay()">
+                        <span id="enc-play-icon">▶</span> <span id="enc-play-text">Play Demo</span>
+                    </button>
+                    <button class="player-btn-sm" onclick="stepEncDemoPrev()" title="Previous Stage">◀ Prev</button>
+                    <button class="player-btn-sm" onclick="stepEncDemoNext()" title="Next Stage">Next ▶</button>
+                    <select class="player-speed-select" id="enc-demo-speed" onchange="setEncDemoSpeed(this.value)">
+                        <option value="2600">1x (Slow)</option>
+                        <option value="1500" selected>1.5x (Normal)</option>
+                        <option value="850">2x (Fast)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Full-Width Stepper Bar -->
+            <div class="hybrid-flow-container" style="margin: 0.75rem 0 1rem 0; background: #070b12;">
+                <div class="flow-step-bar" id="enc-interactive-stepper">
+                    <div class="flow-node interactive-node active" id="fn-file-demo" onclick="setEncDemoStep(0)">
+                        <span class="flow-node-icon">📄</span>
+                        <span class="flow-node-title">Stage 1: File Input</span>
+                        <span class="flow-node-sub">Binary stream</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-hash-demo" onclick="setEncDemoStep(1)">
+                        <span class="flow-node-icon">#️⃣</span>
+                        <span class="flow-node-title">Stage 2: SHA-256</span>
+                        <span class="flow-node-sub">Integrity digest</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-sig-demo" onclick="setEncDemoStep(2)">
+                        <span class="flow-node-icon">✍️</span>
+                        <span class="flow-node-title">Stage 3: RSA Sign</span>
+                        <span class="flow-node-sub">Sender auth (2048b)</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-aes-demo" onclick="setEncDemoStep(3)">
+                        <span class="flow-node-icon">🔒</span>
+                        <span class="flow-node-title">Stage 4: AES-256</span>
+                        <span class="flow-node-sub">Payload encrypt</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-wrap-demo" onclick="setEncDemoStep(4)">
+                        <span class="flow-node-icon">🔑</span>
+                        <span class="flow-node-title">Stage 5: OAEP Wrap</span>
+                        <span class="flow-node-sub">Key transport</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-pkg-demo" onclick="setEncDemoStep(5)">
+                        <span class="flow-node-icon">📦</span>
+                        <span class="flow-node-title">Stage 6: Bundle</span>
+                        <span class="flow-node-sub">JSON envelope</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Stage Visual Inspector -->
+            <div id="enc-stage-inspector" class="stage-inspector-wrap"></div>
         </div>
 
         <div id="enc-result"></div>
@@ -441,6 +512,72 @@
                 <span class="icon"><svg><use href="#i-unlock"/></svg></span>
                 Decrypt, Verify &amp; Authenticate
             </button>
+        </div>
+
+        <!-- Live Decryption Engine Visualizer & Interactive Demo Walkthrough -->
+        <div class="card" id="dec-engine-card" style="margin-top:1.5rem">
+            <div class="card-header" style="justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+                    <span>Inside the Decryption Engine — 6-Stage Security &amp; Verification Demo</span>
+                </div>
+                <div class="player-controls-group">
+                    <button class="player-btn" id="btn-dec-play" onclick="toggleDecDemoPlay()">
+                        <span id="dec-play-icon">▶</span> <span id="dec-play-text">Play Demo</span>
+                    </button>
+                    <button class="player-btn-sm" onclick="stepDecDemoPrev()" title="Previous Stage">◀ Prev</button>
+                    <button class="player-btn-sm" onclick="stepDecDemoNext()" title="Next Stage">Next ▶</button>
+                    <select class="player-speed-select" id="dec-demo-speed" onchange="setDecDemoSpeed(this.value)">
+                        <option value="2600">1x (Slow)</option>
+                        <option value="1500" selected>1.5x (Normal)</option>
+                        <option value="850">2x (Fast)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Full-Width Stepper Bar -->
+            <div class="hybrid-flow-container" style="margin: 0.75rem 0 1rem 0; background: #070b12;">
+                <div class="flow-step-bar" id="dec-interactive-stepper">
+                    <div class="flow-node interactive-node active" id="fn-dec-bundle-demo" onclick="setDecDemoStep(0)">
+                        <span class="flow-node-icon">📦</span>
+                        <span class="flow-node-title">Stage 1: Ingest</span>
+                        <span class="flow-node-sub">Parse envelope</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-dec-wrap-demo" onclick="setDecDemoStep(1)">
+                        <span class="flow-node-icon">🔑</span>
+                        <span class="flow-node-title">Stage 2: Gate 1</span>
+                        <span class="flow-node-sub">RSA-OAEP Unwrap</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-dec-aes-demo" onclick="setDecDemoStep(2)">
+                        <span class="flow-node-icon">🔓</span>
+                        <span class="flow-node-title">Stage 3: Gate 2</span>
+                        <span class="flow-node-sub">AES-CBC Decrypt</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-dec-hash-demo" onclick="setDecDemoStep(3)">
+                        <span class="flow-node-icon">#️⃣</span>
+                        <span class="flow-node-title">Stage 4: Gate 3</span>
+                        <span class="flow-node-sub">SHA-256 Digest</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-dec-sig-demo" onclick="setDecDemoStep(4)">
+                        <span class="flow-node-icon">✍️</span>
+                        <span class="flow-node-title">Stage 5: Gate 4</span>
+                        <span class="flow-node-sub">Sig Verify</span>
+                    </div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-node interactive-node" id="fn-dec-out-demo" onclick="setDecDemoStep(5)">
+                        <span class="flow-node-icon">📄</span>
+                        <span class="flow-node-title">Stage 6: Output</span>
+                        <span class="flow-node-sub">Trusted Plaintext</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Decryption Stage Visual Inspector -->
+            <div id="dec-stage-inspector" class="stage-inspector-wrap"></div>
         </div>
 
         <div id="dec-result"></div>
@@ -1500,20 +1637,675 @@ function updateSecurityGate(id, passed, label) {
     }
 }
 
+
+// ============================================================================
+// Interactive Visual Cryptographic Engine & Walkthrough Demo
+// ============================================================================
+
+const ENC_STAGES = [
+    {
+        id: 'file',
+        num: 1,
+        title: 'Raw File Ingestion & Binary Stream Buffering',
+        badge: 'FIPS 140-3 Compliant Buffer',
+        badgeType: 'cyan',
+        desc: 'The input file is ingested directly into volatile memory as an immutable binary buffer without creating insecure temporary files on disk.',
+        inputTitle: 'Raw Input File Payload',
+        inputSubtitle: 'Arbitrary Binary Format (PDF / DOCX / Image / Text)',
+        getInputSample: function() {
+            if (typeof selectedFile !== 'undefined' && selectedFile) {
+                return 'Selected File: "' + selectedFile.name + '"\nSize: ' + (selectedFile.size/1024).toFixed(2) + ' KB (' + selectedFile.size + ' bytes)\nType: ' + (selectedFile.type || 'application/octet-stream') + '\nHeader magic: 25 50 44 46 2d (%PDF...)';
+            }
+            return 'File: "id card college (1).pdf"\nSize: 158.12 KB (161,914 bytes)\nType: application/pdf\nMagic Bytes: 25 50 44 46 2d 31 2e 35 (%PDF-1.5)';
+        },
+        engineTitle: 'Zero-Disk Streaming Memory Buffer',
+        engineFormula: 'M = \\bigcup_{i=0}^{k-1} B_i \\quad (B_i \\in \\{0,1\\}^{512})',
+        engineDetails: [
+            'Memory locked in RAM via secure zeroing buffers',
+            'Chunked into 64 KB streaming blocks for pipelined processing',
+            'Prevents unencrypted residue on SSD / NVMe swap storage'
+        ],
+        outputTitle: 'Continuous Byte Array (Plaintext M)',
+        outputSubtitle: '158 KB Stream Ready for Parallel Hashing & Encryption',
+        outputHex: '25 50 44 46 2d 31 2e 35 0a 25 d0 d4 c5 d8 0a 34 20 30 20 6f 62 6a 0a 3c 3c 2f 4c 69 6e 65 61 72 69 7a 65 64 20 31 2f 4c 20 31 36 31 39 31 34 2f 4f 20 36 2f 45 20 36 34 32 30 35 2f 4e 20 31 2f 54 20 31 36 31 35 34 30 2f 48 20 5b 20 35 37 32 20 31 39 38 20 5d 3e 3e 0a 65 6e 64 6f 62 6a 0a',
+        securityTitle: 'Zero-Trust Memory Hygiene',
+        securityBenefit: 'Guarantees Confidentiality at Rest. No unencrypted plaintext artifacts ever touch persistent storage or OS swap partitions.'
+    },
+    {
+        id: 'hash',
+        num: 2,
+        title: 'SHA-256 Cryptographic Hash Generation',
+        badge: 'FIPS 180-4 Secure Hash Standard',
+        badgeType: 'purple',
+        desc: 'Computes a deterministic, collision-resistant 256-bit cryptographic fingerprint of the entire file using 64 rounds of non-linear bitwise operations.',
+        inputTitle: 'Full Plaintext Byte Array M',
+        inputSubtitle: '158 KB (1,295,312 bits) processed in 512-bit message blocks',
+        getInputSample: function() {
+            return 'Input: Stream M = {B_0, B_1, ..., B_n}\nBlock Size: 512 bits (64 bytes) with Merkle-Damgård padding\nInitial Vector: H_0 = 6a09e667, bb67ae85, 3c6ef372, a54ff53a...';
+        },
+        engineTitle: '64-Round Merkle-Damgård Compression',
+        engineFormula: 'H^{(i)} = H^{(i-1)} + \\mathbf{C}(M_i, H^{(i-1)})',
+        engineDetails: [
+            'Ch(e,f,g) = (e ∧ f) ⊕ (¬e ∧ g)  [Choice function]',
+            'Maj(a,b,c) = (a ∧ b) ⊕ (a ∧ c) ⊕ (b ∧ c)  [Majority]',
+            'Σ₀(a) = ROTR²(a) ⊕ ROTR¹³(a) ⊕ ROTR²²(a)',
+            'Strict Avalanche Criterion: 1-bit change flips ~50% of hash bits'
+        ],
+        outputTitle: 'Fixed-Length 256-Bit Hash Digest (H)',
+        outputSubtitle: '32-Byte Cryptographic Integrity Fingerprint',
+        outputHex: '9f 86 d0 81 88 4c 7d 65 9a 2f ea a0 c5 5a d0 15 a3 bf 4f 1b 2b 0b 82 2c d1 5d 6c 15 b0 f0 0a 08',
+        securityTitle: 'Integrity & Pre-Image Resistance',
+        securityBenefit: 'Provides Integrity verification (2²⁵⁶ pre-image resistance). Any unauthorized modification during transit alters the hash completely, exposing tampering.'
+    },
+    {
+        id: 'sig',
+        num: 3,
+        title: 'RSA-2048 Digital Signature Generation',
+        badge: 'PKCS#1 v1.5 / RFC 8017',
+        badgeType: 'emerald',
+        desc: 'Encrypts the SHA-256 hash using the Sender private key (d, n). Only the legitimate sender holding the private key could produce this mathematical proof.',
+        inputTitle: 'Hash Digest H + Sender Private Key',
+        inputSubtitle: '32-Byte Hash + 2048-Bit Private Exponent (d, n)',
+        getInputSample: function() {
+            const sender = document.getElementById('enc-sender')?.value || 'akash';
+            return 'Signer Identity: ' + sender + ' (RSA-2048)\nDigest Algorithm: SHA-256 (OID: 2.16.840.1.101.3.4.2.1)\nPadding Scheme: EMSA-PKCS1-v1_5 (0x00 0x01 0xFF... 0x00 DigestInfo)';
+        },
+        engineTitle: 'Modular Exponentiation & CRT Speedup',
+        engineFormula: 'S = (\\text{EMSA}(H))^d \\pmod n',
+        engineDetails: [
+            'Chinese Remainder Theorem: S_p = m^{d_p} mod p, S_q = m^{d_q} mod q',
+            'Montgomery Multiplication for side-channel attack resistance',
+            'Modulus length: 2048 bits (617 decimal digits)',
+            'Guarantees Authentication and Non-Repudiation'
+        ],
+        outputTitle: '256-Byte Digital Signature (S)',
+        outputSubtitle: '2048-Bit Cryptographic Proof of Authorship',
+        outputHex: '7a 8e 4f 1c b9 02 88 e3 a1 d5 99 20 bc fe 11 a7 49 33 08 f2 ee c4 81 9a d0 3b ff 42 c8 19 01 e3 5f b2 90 a4 17 8c 3e d1 04 77 92 aa 5e 3c 11 f0 6b 91 e0 44 d3 89 aa 2b',
+        securityTitle: 'Authenticity & Non-Repudiation',
+        securityBenefit: 'Guarantees Authentication and Non-Repudiation. The sender cannot repudiate (deny) authoring the file, and adversaries cannot forge signatures without knowing factor primes p and q.'
+    },
+    {
+        id: 'aes',
+        num: 4,
+        title: 'AES-256-CBC Bulk Payload Encryption',
+        badge: 'FIPS 197 Advanced Encryption Standard',
+        badgeType: 'amber',
+        desc: 'Generates a one-time 256-bit symmetric session key via CSPRNG and encrypts the file at gigabyte/sec speeds using Cipher Block Chaining (CBC) mode with random IV.',
+        inputTitle: 'Plaintext M + CSPRNG Session Key K + IV',
+        inputSubtitle: 'Random 32-Byte AES Key + 16-Byte Initialization Vector',
+        getInputSample: function() {
+            return 'CSPRNG Source: /dev/urandom (os.urandom(32))\nSession Key (hex): 4a7f9902e1c58812bb43fe019a77d2348c09e5123a44bc60d3e21190afbc3451\nIV (hex): c38491a27e05bb81d4a0376182ef09c1\nChaining Mode: CBC with PKCS#7 padding';
+        },
+        engineTitle: '14-Round Substitution-Permutation Network',
+        engineFormula: 'C_0 = IV, \\quad C_i = \\mathbf{AES}_{K}(P_i \\oplus C_{i-1})',
+        engineDetails: [
+            '14 Rounds: SubBytes (S-Box) → ShiftRows → MixColumns → AddRoundKey',
+            'Galois Field Arithmetic in GF(2⁸) with irreducible poly x⁸ + x⁴ + x³ + x + 1',
+            'CBC Chaining propagates avalanche: each block depends on all prior blocks',
+            'Keyspace: 2²⁵⁶ possible keys (~1.15 × 10⁷⁷ combinations)'
+        ],
+        outputTitle: 'High-Entropy Ciphertext Stream (C_file)',
+        outputSubtitle: '158.14 KB Encrypted Stream (Indistinguishable from Random Noise)',
+        outputHex: 'b2 1c 8a 70 4f ed 99 3b 14 02 ac e7 5d 81 2f 64 00 c8 e1 9a 34 bb 77 90 d5 11 8c f2 aa 93 40 8e 5e 31 d0 88 19 a2 bc 4e 01 f3 77 bb da 99 04 e2 c1 a5 88 32 ff 10 ea 09',
+        securityTitle: 'Confidentiality via Symmetric Speed',
+        securityBenefit: 'Guarantees Confidentiality. Decrypting without the 256-bit key would require billions of years of supercomputing time. Symmetric cipher enables near-instant performance on files of any size.'
+    },
+    {
+        id: 'wrap',
+        num: 5,
+        title: 'RSA-OAEP Session Key Encapsulation (Wrap)',
+        badge: 'RFC 8017 / PKCS#1 v2.2 OAEP',
+        badgeType: 'cyan',
+        desc: 'Encrypts the 32-byte AES session key using the Receiver RSA public key (e=65537, n) using Optimal Asymmetric Encryption Padding to prevent Bleichenbacher padding oracle attacks.',
+        inputTitle: '32-Byte AES Key + Receiver Public Key',
+        inputSubtitle: 'Symmetric Key K (32B) + Receiver Modulus n (2048-bit)',
+        getInputSample: function() {
+            const receiver = document.getElementById('enc-receiver')?.value || 'Alice';
+            return 'Target Receiver: ' + receiver + '\nPublic Exponent: e = 65537 (0x10001)\nReceiver Modulus: 2048 bits\nPadding: RSAES-OAEP with MGF1 (SHA-256 mask generator)';
+        },
+        engineTitle: 'Dual-Mask Feistel Network Padding',
+        engineFormula: 'C_{key} = (\\text{OAEP-ENCODE}(K_{AES}, \\text{seed}))^e \\pmod n',
+        engineDetails: [
+            'Random 32-byte seed generated per encryption',
+            'DB = Hash(L) || PS || 0x01 || K_AES',
+            'maskedDB = DB ⊕ MGF1(seed, 214)',
+            'maskedSeed = seed ⊕ MGF1(maskedDB, 32)',
+            'IND-CCA2 secure: completely immune to chosen-ciphertext attacks'
+        ],
+        outputTitle: '256-Byte Wrapped Session Key (C_key)',
+        outputSubtitle: 'Asymmetrically Encapsulated Key Token',
+        outputHex: '3f 99 2b d0 11 e7 82 a4 cb de 55 12 77 09 ff 4a 13 e0 92 81 44 c2 98 bb 03 a1 df 67 80 e5 b4 21 aa 7c 30 e9 fb 12 d4 88 33 01 ac 59 72 e4 10 b0 d9 33 82 f1 6a c0 91 e8',
+        securityTitle: 'Secure Asymmetric Key Transport',
+        securityBenefit: 'Solves Key Distribution without pre-shared secrets. Only the receiver holding the corresponding RSA private key can unwrap the AES key.'
+    },
+    {
+        id: 'pkg',
+        num: 6,
+        title: 'Cryptographic Bundle Assembly & Packaging',
+        badge: 'Authenticated Cryptographic Container',
+        badgeType: 'emerald',
+        desc: 'Packages the encrypted ciphertext, wrapped AES key, IV, digital signature, SHA-256 hash, and routing metadata into a zero-trust transmission envelope (.enc.json).',
+        inputTitle: '5 Segregated Cryptographic Artifacts',
+        inputSubtitle: '{ C_file, C_key, IV, Signature, Metadata }',
+        getInputSample: function() {
+            return 'Artifact 1: Wrapped Key (256B, base64)\nArtifact 2: CBC IV (16B, base64)\nArtifact 3: Payload Ciphertext (158KB, base64)\nArtifact 4: Sender Signature (256B, base64)\nArtifact 5: Metadata (Bundle ID, identities, timestamp)';
+        },
+        engineTitle: 'JSON Containerization & Transport Encoding',
+        engineFormula: '\\mathcal{B} = \\{ \\text{id}, \\text{sender}, \\text{receiver}, C_{key}, IV, \\sigma, C_{file} \\}',
+        engineDetails: [
+            'Standardized JSON serialization with Base64 RFC 4648 encoding',
+            'Atomic multi-part bundle: cannot be split without invalidating signature',
+            'Portable and transport-agnostic (HTTP, email, USB, cloud storage)',
+            'Ready for immediate secure transmission across untrusted networks'
+        ],
+        outputTitle: 'Final Cryptographic Bundle (.enc.json)',
+        outputSubtitle: 'Self-Contained Tamper-Evident Package',
+        outputHex: '{\n  "bundle_id": "bundle_20261124_9f86",\n  "algorithm_suite": "RSA-2048-OAEP + AES-256-CBC + SHA256-RSA",\n  "sender": "akash",\n  "receiver": "Alice",\n  "encrypted_key_b64": "P5kr0Bdu...",\n  "signature_b64": "eo48F1cb...",\n  "iv_b64": "w4SRon4F...",\n  "ciphertext_b64": "shyKcE/t..."\n}',
+        securityTitle: 'Complete Hybrid Security Suite',
+        securityBenefit: 'Full Cryptographic Protection Achieved: Confidentiality (AES-256) + Authenticity (RSA Sign) + Integrity (SHA-256) + Non-Repudiation (Digital Sig) + Safe Key Transport (RSA-OAEP).'
+    }
+];
+
+const DEC_STAGES = [
+    {
+        id: 'bundle',
+        num: 1,
+        title: 'Cryptographic Bundle Ingestion & Demultiplexing',
+        badge: 'Zero-Trust Ingestion',
+        badgeType: 'cyan',
+        desc: 'Ingests the .enc.json container, parses the transmission envelope, validates identity headers, and demultiplexes into isolated cryptographic tokens.',
+        inputTitle: 'Encrypted Transmission Bundle (.enc.json)',
+        inputSubtitle: 'JSON container received across untrusted network',
+        getInputSample: function() {
+            const bid = document.getElementById('dec-bundle')?.value || 'bundle_sample_id';
+            return 'Bundle Selected: "' + bid + '"\nFormat: RFC 8259 JSON Container\nIntegrity: En route to 4-Gate Cryptographic Inspection';
+        },
+        engineTitle: 'Envelope Parsing & Base64 Decoding',
+        engineFormula: '\\{C_{key}, IV, C_{file}, \\sigma, H_{orig}\\} = \\text{Parse}(\\mathcal{B})',
+        engineDetails: [
+            'Validates bundle schema, algorithm suite, and sender/receiver identities',
+            'Demultiplexes Base64 streams into raw binary byte arrays',
+            'Prepares segregated memory buffers for the 4-gate verification pipeline'
+        ],
+        outputTitle: 'Segregated Cryptographic Tokens',
+        outputSubtitle: '4 Discrete Cryptographic Elements Loaded into Memory',
+        outputHex: 'Tokens extracted: [C_key: 256 bytes] [IV: 16 bytes] [C_file: 161,920 bytes] [Signature: 256 bytes] [Original SHA-256: 32 bytes]',
+        securityTitle: 'Input Sanitization & Separation',
+        securityBenefit: 'Guarantees structural validity before initiating cryptographic coprocessor routines, preventing memory corruption or format exploit attacks.'
+    },
+    {
+        id: 'wrap',
+        num: 2,
+        title: 'Security Gate 1: RSA-OAEP Key Unwrapping',
+        badge: 'Gate 1 Verification • RSA-2048 Private Key',
+        badgeType: 'purple',
+        desc: 'The Receiver uses their private key (d, n) to decrypt the wrapped 256-bit AES session key and validates the OAEP padding to prevent padding oracle exploits.',
+        inputTitle: 'Wrapped Session Key C_key + Receiver Private Key',
+        inputSubtitle: '256-Byte Ciphertext + Receiver Private Exponent d',
+        getInputSample: function() {
+            return 'Wrapped Key (hex): 3f992bd011e782a4cbde55127709ff4a13e0928144c298bb...\nReceiver: Alice\nPrivate Key Modulus: 2048 bits\nPadding: RSAES-OAEP with SHA-256';
+        },
+        engineTitle: 'Modular Exponentiation & OAEP Demasking',
+        engineFormula: 'EM = C_{key}^d \\pmod n, \\quad \\text{DB} = \\text{maskedDB} \\oplus \\text{MGF1}(\\text{seed})',
+        engineDetails: [
+            'Recovers EM = 00 || maskedSeed || maskedDB via private key exponentiation',
+            'Unmasks seed using MGF1(maskedDB)',
+            'Unmasks Data Block (DB) using MGF1(seed)',
+            'Validates Hash(L) prefix: if invalid, padding error triggered immediately'
+        ],
+        outputTitle: 'Restored 256-Bit AES Session Key (K_AES)',
+        outputSubtitle: '32-Byte Symmetric Key Restored in Secure RAM',
+        outputHex: '4a 7f 99 02 e1 c5 88 12 bb 43 fe 01 9a 77 d2 34 8c 09 e5 12 3a 44 bc 60 d3 e2 11 90 af bc 34 51',
+        securityTitle: 'GATE 1 PASSED: Authorized Receiver Verified',
+        securityBenefit: 'Only the legitimate recipient possessing the RSA private key can recover K_AES. Unauthenticated interceptors or MITM eavesdroppers cannot proceed.'
+    },
+    {
+        id: 'aes',
+        num: 3,
+        title: 'Security Gate 2: AES-256-CBC Payload Decryption',
+        badge: 'Gate 2 Verification • FIPS 197 Inverse Cipher',
+        badgeType: 'amber',
+        desc: 'Decrypts the encrypted payload stream block-by-block using AES-256 in CBC mode with the unwrapped session key and IV, then verifies PKCS#7 padding.',
+        inputTitle: 'Ciphertext Stream C_file + Restored K_AES + IV',
+        inputSubtitle: '158.14 KB Encrypted Stream + 32-Byte Key + 16-Byte IV',
+        getInputSample: function() {
+            return 'Ciphertext Stream: 161,920 bytes (10,120 AES blocks)\nAES Key: 4a7f9902e1c58812bb43fe019a77d2348c09e5123a44bc60d3e21190afbc3451\nIV: c38491a27e05bb81d4a0376182ef09c1\nBlock Size: 128 bits (16 bytes)';
+        },
+        engineTitle: 'Inverse AES-256 SP-Network & CBC Unchaining',
+        engineFormula: 'P_i = \\mathbf{AES}^{-1}_{K}(C_i) \\oplus C_{i-1}, \\quad C_0 = IV',
+        engineDetails: [
+            '14 Rounds: InvShiftRows → InvSubBytes → AddRoundKey → InvMixColumns',
+            'XOR with preceding ciphertext block recovers intermediate plaintext',
+            'PKCS#7 Padding Verification: checks last n bytes for value n (1 ≤ n ≤ 16)',
+            'Strips padding bytes to restore exact original file size'
+        ],
+        outputTitle: 'Restored Plaintext Stream (P)',
+        outputSubtitle: 'Exact Original Byte Sequence Restored in Memory',
+        outputHex: '25 50 44 46 2d 31 2e 35 0a 25 d0 d4 c5 d8 0a 34 20 30 20 6f 62 6a 0a 3c 3c 2f 4c 69 6e 65 61 72 69 7a 65 64 20 31 2f 4c 20 31 36 31 39 31 34 2f 4f 20 36 2f 45 20 36 34 32 30 35 2f 4e 20 31 2f 54 20 31 36 31 35 34 30 2f 48 20 5b 20 35 37 32 20 31 39 38 20 5d 3e 3e 0a 65 6e 64 6f 62 6a 0a',
+        securityTitle: 'GATE 2 PASSED: Confidentiality Restored',
+        securityBenefit: 'Hardware-accelerated AES decryption successfully reconstitutes the original byte stream. Next, cryptographic integrity and authentication must be proven.'
+    },
+    {
+        id: 'hash',
+        num: 4,
+        title: 'Security Gate 3: SHA-256 Digest Recomputation',
+        badge: 'Gate 3 Verification • Bitwise Integrity Check',
+        badgeType: 'purple',
+        desc: 'Recomputes the SHA-256 hash from scratch over the restored plaintext and compares it against the bundle hash to verify zero bits were modified.',
+        inputTitle: 'Restored Plaintext P + Stored Bundle Digest',
+        inputSubtitle: 'Re-running SHA-256 over all 161,914 restored bytes',
+        getInputSample: function() {
+            return 'Stored Original Hash: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08\nPlaintext Length: 161,914 bytes\nComputing fresh SHA-256...';
+        },
+        engineTitle: 'Constant-Time Digest Comparison',
+        engineFormula: 'H_{computed} = \\mathbf{SHA256}(P) \\stackrel{?}{=} H_{original}',
+        engineDetails: [
+            'Processes plaintext through 64 rounds of SHA-256 compression',
+            'Constant-time bitwise equality comparison (prevents timing attacks)',
+            'Bit difference metric: 0 bits different (100% bitwise parity)',
+            'If even 1 bit of ciphertext was altered, computed hash differs completely'
+        ],
+        outputTitle: 'SHA-256 Match Confirmation',
+        outputSubtitle: 'Integrity Check: PASSED ✅ (0 Bit Flips)',
+        outputHex: 'Computed Hash: 9f 86 d0 81 88 4c 7d 65 9a 2f ea a0 c5 5a d0 15 a3 bf 4f 1b 2b 0b 82 2c d1 5d 6c 15 b0 f0 0a 08\nOriginal Hash: 9f 86 d0 81 88 4c 7d 65 9a 2f ea a0 c5 5a d0 15 a3 bf 4f 1b 2b 0b 82 2c d1 5d 6c 15 b0 f0 0a 08\nStatus: EXACT 256-BIT MATCH CONFIRMED',
+        securityTitle: 'GATE 3 PASSED: Zero-Tamper Integrity Proven',
+        securityBenefit: 'Guarantees Integrity. Proves with mathematical certainty (2²⁵⁶ confidence) that the decrypted file has not experienced bit-rot, transmission corruption, or malicious tampering.'
+    },
+    {
+        id: 'sig',
+        num: 5,
+        title: 'Security Gate 4: Sender RSA Signature Verification',
+        badge: 'Gate 4 Verification • PKCS#1 v1.5 Non-Repudiation',
+        badgeType: 'emerald',
+        desc: 'Verifies the 256-byte digital signature using the Sender public key (e, n) against the computed SHA-256 hash to confirm authenticity and prevent impersonation.',
+        inputTitle: 'Signature S + Computed Hash H + Sender Public Key',
+        inputSubtitle: '256-Byte Signature + Sender (e=65537, n)',
+        getInputSample: function() {
+            return 'Signer Identity: akash\nSender Public Key: RSA-2048 (e=65537)\nSignature Length: 2048 bits (256 bytes)\nPadding Standard: EMSA-PKCS1-v1_5';
+        },
+        engineTitle: 'Public Key Modular Verification',
+        engineFormula: 'EM = S^e \\pmod n \\stackrel{?}{=} \\text{EMSA}(H_{computed})',
+        engineDetails: [
+            'Exponentiates signature with sender public key: m = S^{65537} mod n',
+            'Extracts EMSA-PKCS1-v1_5 padding structure and DigestInfo ASN.1 prefix',
+            'Compares recovered digest with H_computed in constant-time',
+            'Mathematical proof: Impossible for an attacker to create valid S without private key'
+        ],
+        outputTitle: 'Authentication & Signature Status',
+        outputSubtitle: 'Authenticity Check: VERIFIED ✅ (Valid Signature)',
+        outputHex: 'Signer: "akash" confirmed as true author\nPublic Key Verification: Valid\nTamper Test: Passed\nNon-Repudiation: Enforced',
+        securityTitle: 'GATE 4 PASSED: Sender Authenticated & Non-Repudiation',
+        securityBenefit: 'Guarantees Authenticity & Non-Repudiation. Proves that the authorized sender authored the file and prevents any MITM adversary from impersonating the sender.'
+    },
+    {
+        id: 'out',
+        num: 6,
+        title: 'Trusted File Delivery & Verification Summary',
+        badge: 'Full Clearance: 4/4 Gates Passed',
+        badgeType: 'emerald',
+        desc: 'All four cryptographic security gates have been successfully unlocked and verified. The plaintext file is authenticated, clean, and delivered to the user.',
+        inputTitle: 'Verified & Authenticated Plaintext Payload',
+        inputSubtitle: 'Clean File Stream Approved for Download / Preview',
+        getInputSample: function() {
+            return 'Clearance Status: TRUSTED\nGate 1 (Key Unwrap): PASSED ✅\nGate 2 (AES Decrypt): PASSED ✅\nGate 3 (SHA-256 Integrity): PASSED ✅\nGate 4 (Sender Signature): PASSED ✅';
+        },
+        engineTitle: 'File Materialization & Download Stream',
+        engineFormula: '\\text{Status} = \\text{Gate}_1 \\wedge \\text{Gate}_2 \\wedge \\text{Gate}_3 \\wedge \\text{Gate}_4 \\implies \\mathbf{TRUSTED}',
+        engineDetails: [
+            'Transfers decrypted payload to client download handler',
+            'Generates cryptographic receipt with timestamp and bundle fingerprint',
+            'Maintains end-to-end security boundary from sender to receiver'
+        ],
+        outputTitle: 'Decrypted Output File Ready',
+        outputSubtitle: '158.12 KB Original Document Restored with Full Fidelity',
+        outputHex: 'File: "id card college (1).pdf"\nStatus: Unlocked and Ready for Safe Export\nAudit Trail: Logged into Decryption Ledger',
+        securityTitle: 'End-to-End Cryptographic Success',
+        securityBenefit: 'Full Zero-Trust Assurance achieved. The decrypted file matches bit-for-bit the exact document encrypted by the sender, with all security properties intact.'
+    }
+];
+
+let encDemoCurrentStep = 0;
+let encDemoPlaying = false;
+let encDemoTimer = null;
+let encDemoSpeed = 1500;
+
+let decDemoCurrentStep = 0;
+let decDemoPlaying = false;
+let decDemoTimer = null;
+let decDemoSpeed = 1500;
+
 function updateHybridFlowStep(step) {
     const steps = ['file', 'hash', 'sig', 'aes', 'wrap', 'pkg'];
     const idx = steps.indexOf(step);
-    steps.forEach((s, i) => {
-        const el = document.getElementById('fn-' + s);
-        if (!el) return;
-        el.classList.remove('active', 'completed');
-        if (i < idx) {
-            el.classList.add('completed');
-        } else if (i === idx) {
-            el.classList.add('active');
+    if (idx !== -1) {
+        setEncDemoStep(idx, false);
+    }
+}
+
+function updateDecFlowStep(step) {
+    const steps = ['bundle', 'wrap', 'aes', 'hash', 'sig', 'out'];
+    const idx = steps.indexOf(step);
+    if (idx !== -1) {
+        setDecDemoStep(idx, false);
+    }
+}
+
+function setEncDemoStep(idx, userInitiated = true) {
+    if (userInitiated && encDemoPlaying) {
+        stopEncDemo();
+    }
+    encDemoCurrentStep = Math.max(0, Math.min(5, idx));
+    const stepIds = ['file', 'hash', 'sig', 'aes', 'wrap', 'pkg'];
+    
+    // Sync both stepper bars (mini and full-width demo stepper)
+    stepIds.forEach((s, i) => {
+        const miniEl = document.getElementById('fn-' + s);
+        const demoEl = document.getElementById('fn-' + s + '-demo');
+        [miniEl, demoEl].forEach(el => {
+            if (!el) return;
+            el.classList.remove('active', 'completed');
+            if (i < encDemoCurrentStep) {
+                el.classList.add('completed');
+            } else if (i === encDemoCurrentStep) {
+                el.classList.add('active');
+            }
+        });
+    });
+
+    renderEncStageDetails(encDemoCurrentStep);
+}
+
+function renderEncStageDetails(idx) {
+    const stage = ENC_STAGES[idx];
+    const inspector = document.getElementById('enc-stage-inspector');
+    if (!inspector || !stage) return;
+
+    inspector.innerHTML = `
+        <div class="stage-inspector-header">
+            <div class="stage-title-wrap">
+                <div class="stage-num-badge">${stage.num}</div>
+                <div>
+                    <div class="stage-main-title">${stage.title}</div>
+                    <div class="stage-main-desc">${stage.desc}</div>
+                </div>
+            </div>
+            <div>
+                <span class="status-tag ok">${stage.badge}</span>
+            </div>
+        </div>
+
+        <div class="stage-flow-grid">
+            <!-- 1. Input Box -->
+            <div class="stage-box input-box">
+                <div class="stage-box-header">
+                    <span>Input State</span>
+                    <span style="color:var(--cyan-400)">Stage ${stage.num} In</span>
+                </div>
+                <div class="stage-box-subtitle">${stage.inputSubtitle}</div>
+                <pre class="stage-code-preview">${stage.getInputSample()}</pre>
+            </div>
+
+            <!-- 2. Engine Operator Box -->
+            <div class="stage-box engine-box">
+                <div class="stage-engine-pulse"></div>
+                <div class="stage-box-header" style="justify-content:center">
+                    <span>Cryptographic Engine</span>
+                </div>
+                <div class="stage-math-display">${stage.engineFormula}</div>
+                <ul class="stage-engine-bullets">
+                    ${stage.engineDetails.map(d => `<li>${d}</li>`).join('')}
+                </ul>
+            </div>
+
+            <!-- 3. Output Box -->
+            <div class="stage-box output-box">
+                <div class="stage-box-header">
+                    <span>Transformed Output</span>
+                    <span style="color:var(--green-400)">Stage ${stage.num} Out</span>
+                </div>
+                <div class="stage-box-subtitle">${stage.outputSubtitle}</div>
+                <pre class="stage-hex-box">${stage.outputHex}</pre>
+            </div>
+        </div>
+
+        <div class="stage-security-callout">
+            <div class="stage-sec-icon">🛡️</div>
+            <div>
+                <div class="stage-sec-title">Cryptographic Guarantee: ${stage.securityTitle}</div>
+                <div class="stage-sec-text">${stage.securityBenefit}</div>
+            </div>
+        </div>
+    `;
+}
+
+function toggleEncDemoPlay() {
+    if (encDemoPlaying) {
+        stopEncDemo();
+    } else {
+        startEncDemo();
+    }
+}
+
+function startEncDemo() {
+    encDemoPlaying = true;
+    const btn = document.getElementById('btn-enc-play');
+    if (btn) {
+        btn.classList.add('playing');
+        document.getElementById('enc-play-icon').textContent = '⏸';
+        document.getElementById('enc-play-text').textContent = 'Pause Demo';
+    }
+    if (encDemoCurrentStep >= 5) {
+        setEncDemoStep(0, false);
+    }
+    clearInterval(encDemoTimer);
+    encDemoTimer = setInterval(() => {
+        if (encDemoCurrentStep < 5) {
+            setEncDemoStep(encDemoCurrentStep + 1, false);
+        } else {
+            // Loop or stop
+            setEncDemoStep(0, false);
+        }
+    }, encDemoSpeed);
+}
+
+function stopEncDemo() {
+    encDemoPlaying = false;
+    clearInterval(encDemoTimer);
+    const btn = document.getElementById('btn-enc-play');
+    if (btn) {
+        btn.classList.remove('playing');
+        document.getElementById('enc-play-icon').textContent = '▶';
+        document.getElementById('enc-play-text').textContent = 'Play Demo';
+    }
+}
+
+function stepEncDemoNext() {
+    stopEncDemo();
+    const next = (encDemoCurrentStep + 1) % 6;
+    setEncDemoStep(next, true);
+}
+
+function stepEncDemoPrev() {
+    stopEncDemo();
+    const prev = (encDemoCurrentStep + 5) % 6;
+    setEncDemoStep(prev, true);
+}
+
+function setEncDemoSpeed(val) {
+    encDemoSpeed = parseInt(val, 10) || 1500;
+    if (encDemoPlaying) {
+        clearInterval(encDemoTimer);
+        encDemoTimer = setInterval(() => {
+            if (encDemoCurrentStep < 5) {
+                setEncDemoStep(encDemoCurrentStep + 1, false);
+            } else {
+                setEncDemoStep(0, false);
+            }
+        }, encDemoSpeed);
+    }
+}
+
+// ── Symmetrical Decryption Engine Visualizer
+function setDecDemoStep(idx, userInitiated = true) {
+    if (userInitiated && decDemoPlaying) {
+        stopDecDemo();
+    }
+    decDemoCurrentStep = Math.max(0, Math.min(5, idx));
+    const stepIds = ['bundle', 'wrap', 'aes', 'hash', 'sig', 'out'];
+
+    stepIds.forEach((s, i) => {
+        const demoEl = document.getElementById('fn-dec-' + s + '-demo');
+        if (!demoEl) return;
+        demoEl.classList.remove('active', 'completed');
+        if (i < decDemoCurrentStep) {
+            demoEl.classList.add('completed');
+        } else if (i === decDemoCurrentStep) {
+            demoEl.classList.add('active');
         }
     });
+
+    // Also update security gates in sync!
+    if (idx === 0) {
+        resetSecurityGates();
+    } else {
+        if (idx >= 1) updateSecurityGate('gate-key', true, 'Unwrapped ✅');
+        if (idx >= 2) updateSecurityGate('gate-aes', true, 'Decrypted ✅');
+        if (idx >= 3) updateSecurityGate('gate-hash', true, 'Match ✅');
+        if (idx >= 4) updateSecurityGate('gate-sig', true, 'Valid ✅');
+    }
+
+    renderDecStageDetails(decDemoCurrentStep);
 }
+
+function renderDecStageDetails(idx) {
+    const stage = DEC_STAGES[idx];
+    const inspector = document.getElementById('dec-stage-inspector');
+    if (!inspector || !stage) return;
+
+    inspector.innerHTML = `
+        <div class="stage-inspector-header">
+            <div class="stage-title-wrap">
+                <div class="stage-num-badge" style="background:linear-gradient(135deg, #059669, #0d9488)">${stage.num}</div>
+                <div>
+                    <div class="stage-main-title">${stage.title}</div>
+                    <div class="stage-main-desc">${stage.desc}</div>
+                </div>
+            </div>
+            <div>
+                <span class="status-tag ok">${stage.badge}</span>
+            </div>
+        </div>
+
+        <div class="stage-flow-grid">
+            <!-- 1. Input Box -->
+            <div class="stage-box input-box">
+                <div class="stage-box-header">
+                    <span>Input Ciphertext / Tokens</span>
+                    <span style="color:var(--cyan-400)">Stage ${stage.num} In</span>
+                </div>
+                <div class="stage-box-subtitle">${stage.inputSubtitle}</div>
+                <pre class="stage-code-preview">${stage.getInputSample()}</pre>
+            </div>
+
+            <!-- 2. Engine Operator Box -->
+            <div class="stage-box engine-box" style="border-color:rgba(52, 211, 153, 0.4)">
+                <div class="stage-engine-pulse" style="background:#34d399;box-shadow:0 0 10px #34d399"></div>
+                <div class="stage-box-header" style="justify-content:center">
+                    <span>Decryption &amp; Gate Verification</span>
+                </div>
+                <div class="stage-math-display" style="color:#6ee7b7;background:rgba(5, 150, 105, 0.1);border-color:rgba(5, 150, 105, 0.35)">${stage.engineFormula}</div>
+                <ul class="stage-engine-bullets">
+                    ${stage.engineDetails.map(d => `<li>${d}</li>`).join('')}
+                </ul>
+            </div>
+
+            <!-- 3. Output Box -->
+            <div class="stage-box output-box">
+                <div class="stage-box-header">
+                    <span>Verified Plaintext / Proof</span>
+                    <span style="color:var(--green-400)">Stage ${stage.num} Out</span>
+                </div>
+                <div class="stage-box-subtitle">${stage.outputSubtitle}</div>
+                <pre class="stage-hex-box" style="color:#34d399">${stage.outputHex}</pre>
+            </div>
+        </div>
+
+        <div class="stage-security-callout">
+            <div class="stage-sec-icon">🔓</div>
+            <div>
+                <div class="stage-sec-title">Security Gate Insight: ${stage.securityTitle}</div>
+                <div class="stage-sec-text">${stage.securityBenefit}</div>
+            </div>
+        </div>
+    `;
+}
+
+function toggleDecDemoPlay() {
+    if (decDemoPlaying) {
+        stopDecDemo();
+    } else {
+        startDecDemo();
+    }
+}
+
+function startDecDemo() {
+    decDemoPlaying = true;
+    const btn = document.getElementById('btn-dec-play');
+    if (btn) {
+        btn.classList.add('playing');
+        document.getElementById('dec-play-icon').textContent = '⏸';
+        document.getElementById('dec-play-text').textContent = 'Pause Demo';
+    }
+    if (decDemoCurrentStep >= 5) {
+        setDecDemoStep(0, false);
+    }
+    clearInterval(decDemoTimer);
+    decDemoTimer = setInterval(() => {
+        if (decDemoCurrentStep < 5) {
+            setDecDemoStep(decDemoCurrentStep + 1, false);
+        } else {
+            setDecDemoStep(0, false);
+        }
+    }, decDemoSpeed);
+}
+
+function stopDecDemo() {
+    decDemoPlaying = false;
+    clearInterval(decDemoTimer);
+    const btn = document.getElementById('btn-dec-play');
+    if (btn) {
+        btn.classList.remove('playing');
+        document.getElementById('dec-play-icon').textContent = '▶';
+        document.getElementById('dec-play-text').textContent = 'Play Demo';
+    }
+}
+
+function stepDecDemoNext() {
+    stopDecDemo();
+    const next = (decDemoCurrentStep + 1) % 6;
+    setDecDemoStep(next, true);
+}
+
+function stepDecDemoPrev() {
+    stopDecDemo();
+    const prev = (decDemoCurrentStep + 5) % 6;
+    setDecDemoStep(prev, true);
+}
+
+function setDecDemoSpeed(val) {
+    decDemoSpeed = parseInt(val, 10) || 1500;
+    if (decDemoPlaying) {
+        clearInterval(decDemoTimer);
+        decDemoTimer = setInterval(() => {
+            if (decDemoCurrentStep < 5) {
+                setDecDemoStep(decDemoCurrentStep + 1, false);
+            } else {
+                setDecDemoStep(0, false);
+            }
+        }, decDemoSpeed);
+    }
+}
+
 
 
 function switchAcademyTab(tabId) {
@@ -2329,21 +3121,27 @@ async function decryptBundle() {
 
     try {
         addLog('dec-log', `Decrypting bundle "${bid}"`, 'info');
+        updateDecFlowStep('bundle');
+        await sleep(30);
         
         // Animate Gate 1: RSA-OAEP
         const gKey = document.getElementById('gate-key'); if (gKey) gKey.classList.add('active');
+        updateDecFlowStep('wrap');
         await sleep(30); addLog('dec-log', 'Unwrapping AES key with receiver RSA private key…');
         
         // Animate Gate 2: AES-CBC
         const gAes = document.getElementById('gate-aes'); if (gAes) gAes.classList.add('active');
+        updateDecFlowStep('aes');
         await sleep(30); addLog('dec-log', 'Decrypting file with AES-256-CBC…');
         
         // Animate Gate 3: SHA-256
         const gHash = document.getElementById('gate-hash'); if (gHash) gHash.classList.add('active');
+        updateDecFlowStep('hash');
         await sleep(30); addLog('dec-log', 'Recomputing SHA-256 hash…');
         
         // Animate Gate 4: Signature
         const gSig = document.getElementById('gate-sig'); if (gSig) gSig.classList.add('active');
+        updateDecFlowStep('sig');
         await sleep(30); addLog('dec-log', 'Verifying digital signature…');
 
         const d = await api('/api/decrypt', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bundle_id:bid}) });
@@ -2368,7 +3166,7 @@ async function decryptBundle() {
         } else {
             addLog('dec-log', 'Integrity check PASSED (SHA-256)', 'ok');
             addLog('dec-log', 'Sender authentication VERIFIED', 'ok');
-            addLog('dec-log', 'File is TRUSTED', 'ok');
+            addLog('dec-log', 'File is TRUSTED', 'ok'); updateDecFlowStep('out');
         }
 
         if (el) {
@@ -3217,6 +4015,8 @@ function resetFeistel() {
 
 // ── Init
 renderFeistelLadder();
+setEncDemoStep(0, false);
+setDecDemoStep(0, false);
 refreshData();
 </script>
 
